@@ -8,7 +8,414 @@
 <meta property="og:title" content="Quest Viewer — Live VR streaming from Meta Quest to your PC">
 <meta property="og:description" content="See inside every headset, live. Sub-100ms WebRTC streaming from Meta Quest to Windows.">
 <meta property="og:type" content="website">
+<style><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quest Viewer — Live VR streaming from Meta Quest to your PC</title>
+<meta name="description" content="Quest Viewer streams live video and audio from Meta Quest headsets to a Windows PC over WebRTC. Sub-100ms, peer-to-peer, no capture card. Free Unity SDK, free for one headset.">
+<meta property="og:title" content="Quest Viewer — Live VR streaming from Meta Quest to your PC">
+<meta property="og:description" content="See inside every headset, live. Sub-100ms WebRTC streaming from Meta Quest to Windows.">
+<meta property="og:type" content="website">
 <style>
+  :root{
+    --bg:#0A0C10; --surface:#12151C; --surface-2:#171B24; --line:#232936;
+    --text:#E8ECF4; --muted:#9AA5B8; --dim:#6B7688;
+    --violet:#7C5CFF; --blue:#4F8CFF; --mint:#3DD8A0;
+    --grad:linear-gradient(135deg,#7C5CFF 0%,#4F8CFF 100%);
+    --radius:14px; --maxw:1080px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg);color:var(--text);
+    font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--blue);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+  section{padding:72px 0;border-top:1px solid var(--line)}
+  h1,h2,h3{line-height:1.2;letter-spacing:-.02em}
+  h2{font-size:30px;margin-bottom:12px}
+  h3{font-size:17px;margin-bottom:6px}
+  .lede{color:var(--muted);max-width:62ch;margin-bottom:32px}
+
+  /* ---- header ---- */
+  header{position:sticky;top:0;z-index:20;background:rgba(10,12,16,.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+  .nav{display:flex;align-items:center;gap:28px;height:62px}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:650;letter-spacing:-.01em;color:var(--text)}
+  .brand:hover{text-decoration:none}
+  .mark{width:26px;height:26px;border-radius:8px;background:var(--grad);flex:none}
+  .nav nav{margin-left:auto;display:flex;gap:24px;flex-wrap:wrap}
+  .nav nav a{color:var(--muted);font-size:14.5px}
+  .nav nav a:hover{color:var(--text);text-decoration:none}
+
+  /* ---- hero ---- */
+  .hero{padding:88px 0 64px;border-top:none}
+  .kicker{display:inline-block;font-size:12.5px;letter-spacing:.09em;text-transform:uppercase;
+    color:var(--violet);border:1px solid #2C2450;background:#151230;padding:5px 11px;border-radius:999px;margin-bottom:22px}
+  .hero h1{font-size:clamp(34px,5.2vw,54px);max-width:16ch;margin-bottom:18px}
+  .hero h1 em{font-style:normal;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero p{color:var(--muted);font-size:18px;max-width:60ch;margin-bottom:30px}
+  .cta{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .btn{display:inline-block;padding:12px 22px;border-radius:11px;font-weight:600;font-size:15px;border:1px solid transparent}
+  .btn-primary{background:var(--grad);color:#fff}
+  .btn-primary:hover{opacity:.92;text-decoration:none}
+  .btn-ghost{border-color:var(--line);color:var(--text);background:var(--surface)}
+  .btn-ghost:hover{border-color:#37405270;text-decoration:none}
+  .note{color:var(--dim);font-size:13.5px;margin-top:14px}
+
+  /* ---- product shot ---- */
+  .shot{margin-top:48px;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:var(--surface)}
+  .shot svg{display:block;width:100%;height:auto}
+  .caption{color:var(--dim);font-size:13px;text-align:center;margin-top:12px}
+
+  /* ---- grids ---- */
+  .grid{display:grid;gap:20px;grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px}
+  .card p{color:var(--muted);font-size:14.5px}
+  .dot{width:9px;height:9px;border-radius:3px;background:var(--grad);display:inline-block;margin-right:9px;vertical-align:middle}
+
+  /* ---- steps ---- */
+  ol.steps{list-style:none;counter-reset:s;display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+  ol.steps li{counter-increment:s;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px}
+  ol.steps li::before{content:counter(s);display:flex;align-items:center;justify-content:center;
+    width:28px;height:28px;border-radius:9px;background:var(--surface-2);border:1px solid var(--line);
+    color:var(--violet);font-weight:700;font-size:13px;margin-bottom:12px}
+  ol.steps p{color:var(--muted);font-size:14.5px}
+
+  /* ---- pricing ---- */
+  .tiers{display:grid;gap:20px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));align-items:start}
+  .tier{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:24px;display:flex;flex-direction:column;height:100%}
+  .tier.featured{border-color:#3A2F73;background:linear-gradient(180deg,#151230 0%,var(--surface) 60%)}
+  .tier .name{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+  .tier .price{font-size:36px;font-weight:700;letter-spacing:-.03em}
+  .tier .price small{font-size:14px;font-weight:500;color:var(--dim);letter-spacing:0}
+  .tier .sub{color:var(--dim);font-size:13.5px;margin:6px 0 18px}
+  .tier ul{list-style:none;display:grid;gap:9px;font-size:14.5px;color:var(--muted);margin-bottom:20px}
+  .tier ul li::before{content:"—";color:var(--violet);margin-right:9px}
+  .tier .btn{margin-top:auto;text-align:center}
+  .badge{display:inline-block;font-size:11px;letter-spacing:.07em;text-transform:uppercase;
+    background:var(--grad);color:#fff;padding:3px 9px;border-radius:999px;margin-left:8px;vertical-align:2px}
+
+  table{width:100%;border-collapse:collapse;font-size:14.5px;margin-top:28px}
+  th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line)}
+  th{color:var(--muted);font-weight:600;font-size:13px;letter-spacing:.04em;text-transform:uppercase}
+  td:last-child,th:last-child{text-align:right}
+
+  /* ---- policy ---- */
+  .policy h3{margin-top:26px}
+  .policy p,.policy li{color:var(--muted);font-size:14.5px}
+  .policy ul{margin:8px 0 0 20px;display:grid;gap:6px}
+
+  footer{border-top:1px solid var(--line);padding:36px 0 56px;color:var(--dim);font-size:14px}
+  .foot{display:flex;gap:28px;flex-wrap:wrap;justify-content:space-between}
+  .foot a{color:var(--muted)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="#top"><span class="mark"></span>Quest Viewer</a>
+    <nav>
+      <a href="#features">Features</a>
+      <a href="#how">How it works</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#sdk">Unity SDK</a>
+      <a href="#support">Support</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- ══ HERO ══ -->
+<section class="hero">
+  <div class="wrap">
+    <span class="kicker">For Meta Quest 2 · 3 · 3S · Pro</span>
+    <h1>See inside every headset. <em>Live.</em></h1>
+    <p>Quest Viewer streams what a person sees inside a Meta Quest headset to a Windows PC in
+       real time — sub-100&nbsp;ms over your own network, peer-to-peer, with no capture card
+       and no cloud service. Watch one headset or a whole room of them, side by side.</p>
+    <div class="cta">
+      <a class="btn btn-primary" href="#pricing">See pricing</a>
+      <a class="btn btn-ghost" href="#download">Download for Windows</a>
+    </div>
+    <p class="note">Free forever for one headset at 720p. No account required to try it.</p>
+
+    <div class="shot">
+      <!-- Replace with a real screenshot of the receiver at 1200px+ wide. -->
+      <svg viewBox="0 0 1200 620" xmlns="http://www.w3.org/2000/svg" role="img"
+           aria-label="Quest Viewer receiver showing four live headset tiles">
+        <defs>
+          <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#7C5CFF"/><stop offset="1" stop-color="#4F8CFF"/>
+          </linearGradient>
+          <linearGradient id="v" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#1D2536"/><stop offset="1" stop-color="#141A26"/>
+          </linearGradient>
+        </defs>
+        <rect width="1200" height="620" fill="#0E1118"/>
+        <!-- sidebar -->
+        <rect x="0" y="0" width="64" height="620" fill="#12151C"/>
+        <rect x="20" y="26" width="24" height="24" rx="7" fill="url(#g)"/>
+        <g fill="#39415420">
+          <rect x="20" y="86" width="24" height="24" rx="7"/>
+          <rect x="20" y="126" width="24" height="24" rx="7"/>
+          <rect x="20" y="166" width="24" height="24" rx="7"/>
+        </g>
+        <!-- top bar -->
+        <text x="92" y="46" fill="#E8ECF4" font-family="Segoe UI,sans-serif" font-size="19" font-weight="600">Connected headsets</text>
+        <rect x="1010" y="26" width="70" height="26" rx="13" fill="#151230" stroke="#2C2450"/>
+        <text x="1045" y="44" fill="#9E8CFF" font-family="Segoe UI,sans-serif" font-size="11.5" text-anchor="middle" letter-spacing="1">PRO</text>
+        <rect x="1094" y="26" width="70" height="26" rx="13" fill="#12151C" stroke="#232936"/>
+        <text x="1129" y="44" fill="#9AA5B8" font-family="Segoe UI,sans-serif" font-size="11.5" text-anchor="middle">Tiles</text>
+        <!-- tiles -->
+        <g font-family="Segoe UI,sans-serif">
+          <!-- tile 1 -->
+          <rect x="92" y="76" width="516" height="248" rx="12" fill="url(#v)" stroke="#232936"/>
+          <circle cx="300" cy="186" r="46" fill="#7C5CFF14" stroke="#7C5CFF40"/>
+          <path d="M280 166 l40 20 -40 20 z" fill="#7C5CFF"/>
+          <rect x="108" y="288" width="9" height="9" rx="2.5" fill="#3DD8A0"/>
+          <text x="126" y="297" fill="#E8ECF4" font-size="13.5">Studio Quest 3 — A1</text>
+          <text x="592" y="297" fill="#6B7688" font-size="12" text-anchor="end">1080p · 72 fps · 41 ms</text>
+          <!-- tile 2 -->
+          <rect x="624" y="76" width="484" height="248" rx="12" fill="url(#v)" stroke="#232936"/>
+          <circle cx="866" cy="186" r="46" fill="#4F8CFF14" stroke="#4F8CFF40"/>
+          <path d="M846 166 l40 20 -40 20 z" fill="#4F8CFF"/>
+          <rect x="640" y="288" width="9" height="9" rx="2.5" fill="#3DD8A0"/>
+          <text x="658" y="297" fill="#E8ECF4" font-size="13.5">Training Bay 2</text>
+          <text x="1092" y="297" fill="#6B7688" font-size="12" text-anchor="end">1080p · 72 fps · 38 ms</text>
+          <!-- tile 3 -->
+          <rect x="92" y="344" width="484" height="240" rx="12" fill="url(#v)" stroke="#232936"/>
+          <circle cx="334" cy="448" r="42" fill="#7C5CFF14" stroke="#7C5CFF40"/>
+          <path d="M316 430 l36 18 -36 18 z" fill="#7C5CFF"/>
+          <rect x="108" y="550" width="9" height="9" rx="2.5" fill="#3DD8A0"/>
+          <text x="126" y="559" fill="#E8ECF4" font-size="13.5">Quest Pro — Demo</text>
+          <text x="560" y="559" fill="#6B7688" font-size="12" text-anchor="end">720p · 72 fps · 44 ms</text>
+          <!-- tile 4 offline -->
+          <rect x="592" y="344" width="516" height="240" rx="12" fill="#101420" stroke="#232936"/>
+          <circle cx="850" cy="448" r="42" fill="none" stroke="#2A3142" stroke-dasharray="5 5"/>
+          <text x="850" y="454" fill="#4C5568" font-size="13" text-anchor="middle">Offline</text>
+          <rect x="608" y="550" width="9" height="9" rx="2.5" fill="#4C5568"/>
+          <text x="626" y="559" fill="#8C97AB" font-size="13.5">Lab Quest 2</text>
+          <text x="1092" y="559" fill="#4C5568" font-size="12" text-anchor="end">reconnecting…</text>
+        </g>
+      </svg>
+    </div>
+    <p class="caption">The Windows receiver showing four headsets at once. Tiles stay in place when a headset drops and reconnect on their own.</p>
+  </div>
+</section>
+
+<!-- ══ FEATURES ══ -->
+<section id="features">
+  <div class="wrap">
+    <h2>What it does</h2>
+    <p class="lede">One Unity package in your VR app, one application on the PC. Everything else is automatic.</p>
+    <div class="grid">
+      <div class="card"><h3><span class="dot"></span>Real-time video and audio</h3>
+        <p>Hardware H.264/HEVC encoding on the headset and Opus audio, carried by WebRTC. Typically well under 100&nbsp;ms on a local network.</p></div>
+      <div class="card"><h3><span class="dot"></span>Zero-configuration discovery</h3>
+        <p>Put the headset on the same Wi-Fi and it appears on the PC. No IP addresses, no pairing codes, no router changes.</p></div>
+      <div class="card"><h3><span class="dot"></span>Many headsets at once</h3>
+        <p>Watch a whole room in a tile grid or a compact list, then click any one to go fullscreen. Tested against a ten-headset target.</p></div>
+      <div class="card"><h3><span class="dot"></span>Spectator cameras</h3>
+        <p>Stream the player's own view, or any camera in your scene — a third-person chase cam, a fixed stage camera — and switch between them live.</p></div>
+      <div class="card"><h3><span class="dot"></span>Quality control from the PC</h3>
+        <p>Change resolution, frame rate and bitrate from the receiver while the stream is running. The headset applies it without dropping the session.</p></div>
+      <div class="card"><h3><span class="dot"></span>Sessions that heal themselves</h3>
+        <p>Headset sleeps, loses tracking or steps outside the guardian? The stream picks itself back up. No restarting the app on either end.</p></div>
+      <div class="card"><h3><span class="dot"></span>Kind to the headset</h3>
+        <p>Capture renders only while somebody is actually watching, so idle headsets stay cool and hold their charge.</p></div>
+      <div class="card"><h3><span class="dot"></span>Your footage stays yours</h3>
+        <p>Video travels directly from headset to PC. It never passes through our servers, because we do not run any.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ HOW ══ -->
+<section id="how">
+  <div class="wrap">
+    <h2>How it works</h2>
+    <p class="lede">Only discovery uses the network's broadcast or an optional relay. The video itself goes straight from the headset to your PC — that is what keeps latency low and footage private.</p>
+    <ol class="steps">
+      <li><h3>Add the SDK</h3><p>Import the free Quest Streaming SDK into your Unity project. A setup wizard checks your Android and OpenXR settings and fixes what is wrong.</p></li>
+      <li><h3>Build and run</h3><p>Deploy your app to the headset as usual. Streaming rides along inside it — there is no second app for users to launch.</p></li>
+      <li><h3>Open the receiver</h3><p>Run Quest Viewer on your Windows PC. Every headset on the network running your app shows up as a tile.</p></li>
+      <li><h3>Click and watch</h3><p>Pick a tile for fullscreen, switch cameras, change quality, or record the session to a file.</p></li>
+    </ol>
+  </div>
+</section>
+
+<!-- ══ PRICING ══ -->
+<section id="pricing">
+  <div class="wrap">
+    <h2>Pricing</h2>
+    <p class="lede">The Unity SDK is free with full source, always. The Windows receiver is free for one
+       headset at 720p — enough to develop, test and ship. Paid licences lift the limits for studios
+       and venues. Prices in US dollars; local taxes are calculated at checkout.</p>
+
+    <div class="tiers">
+      <div class="tier">
+        <div class="name">Free</div>
+        <div class="price">$0</div>
+        <div class="sub">Forever, no account</div>
+        <ul>
+          <li>One headset at a time</li>
+          <li>Up to 720p</li>
+          <li>Fullscreen, tile and list views</li>
+          <li>Community support</li>
+        </ul>
+        <a class="btn btn-ghost" href="#download">Download</a>
+      </div>
+
+      <div class="tier featured">
+        <div class="name">Pro <span class="badge">Popular</span></div>
+        <div class="price">$150<small> /year</small></div>
+        <div class="sub">$250 for two years · $499 lifetime</div>
+        <ul>
+          <li>Unlimited simultaneous headsets</li>
+          <li>Full resolution, up to 4K-ready</li>
+          <li>Session recording</li>
+          <li>3 machine activations</li>
+          <li>Updates and email support</li>
+        </ul>
+        <a class="btn btn-primary" href="#download">Buy Pro</a>
+      </div>
+
+      <div class="tier">
+        <div class="name">Venue</div>
+        <div class="price">$799<small> /year</small></div>
+        <div class="sub">$1,099 lifetime</div>
+        <ul>
+          <li>Everything in Pro</li>
+          <li>10 machine activations</li>
+          <li>Priority support</li>
+          <li>For arcades, LBE and training floors</li>
+        </ul>
+        <a class="btn btn-ghost" href="#support">Talk to us</a>
+      </div>
+    </div>
+
+    <table>
+      <thead><tr><th>Licence</th><th>Machines</th><th>Term</th><th>Price (USD)</th></tr></thead>
+      <tbody>
+        <tr><td>Pro — 1 year</td><td>3</td><td>12 months</td><td>$150</td></tr>
+        <tr><td>Pro — 2 years</td><td>3</td><td>24 months</td><td>$250</td></tr>
+        <tr><td>Pro — lifetime</td><td>3</td><td>Perpetual</td><td>$499</td></tr>
+        <tr><td>Venue — annual</td><td>10</td><td>12 months</td><td>$799</td></tr>
+        <tr><td>Venue — lifetime</td><td>10</td><td>Perpetual</td><td>$1,099</td></tr>
+      </tbody>
+    </table>
+
+    <p class="note">A licence key arrives by email immediately after purchase. Paste it into the app to
+      activate this PC; you can deactivate a PC at any time to free the slot for another. When a
+      subscription lapses the version you already installed keeps working — renewal only covers new releases.</p>
+  </div>
+</section>
+
+<!-- ══ SDK ══ -->
+<section id="sdk">
+  <div class="wrap">
+    <h2>The Unity SDK is free</h2>
+    <p class="lede">Quest Streaming SDK is published on the Unity Asset Store with complete C# source.
+      No activation, no phone-home, no runtime fee — embed it in commercial projects freely.
+      Requires Unity 6000.0 or newer and <code>com.unity.webrtc</code> 3.0.0+, which the package offers
+      to install for you on import.</p>
+    <div class="cta">
+      <a class="btn btn-ghost" href="mailto:gowthambaskaran.xr@gmail.com?subject=Quest%20Streaming%20SDK">Get the SDK</a>
+    </div>
+  </div>
+</section>
+
+<!-- ══ DOWNLOAD ══ -->
+<section id="download">
+  <div class="wrap">
+    <h2>Get Quest Viewer</h2>
+    <p class="lede">Windows 10 version 1809 or newer, 64-bit. The free tier needs no key —
+      download, run, put a headset on.</p>
+    <div class="cta">
+      <a class="btn btn-primary" href="mailto:gowthambaskaran.xr@gmail.com?subject=Quest%20Viewer%20—%20request%20a%20build">Request a build</a>
+      <a class="btn btn-ghost" href="#pricing">See licence options</a>
+    </div>
+    <p class="note">We are finishing the public installer. Email us and we will send you the current
+      build the same day — tell us which headsets you are running and we will help you get set up.</p>
+  </div>
+</section>
+
+<!-- ══ POLICIES ══ -->
+<section id="support" class="policy">
+  <div class="wrap">
+    <h2>Support, refunds and terms</h2>
+
+    <h3 id="contact">Contact</h3>
+    <p>Email <a href="mailto:gowthambaskaran.xr@gmail.com">gowthambaskaran.xr@gmail.com</a>.
+       We answer within two business days, usually much sooner. Quest Viewer is built and sold by
+       Gowtham, a sole proprietorship registered in Salem, Tamil Nadu, India.</p>
+
+    <h3 id="refunds">Refund policy</h3>
+    <p>If Quest Viewer does not work for you, write to us within <strong>30 days</strong> of purchase and
+       we will refund you in full — no questionnaire, no restocking fee. We would rather fix the problem,
+       so tell us what went wrong and give us a chance first, but the refund is yours either way.</p>
+    <ul>
+      <li>Refunds return to the original payment method, typically within 5–10 business days.</li>
+      <li>The licence key is deactivated when the refund is issued.</li>
+      <li>Because the free tier lets you evaluate the software on your own hardware before paying,
+          we ask that you try it first.</li>
+    </ul>
+
+    <h3 id="terms">Licence terms</h3>
+    <ul>
+      <li>A Pro licence may be activated on up to 3 computers; a Venue licence on up to 10. You may
+          deactivate a computer at any time and move the activation elsewhere.</li>
+      <li>The licence is for your use or your organisation's. Reselling, sublicensing or redistributing
+          the software or your key is not permitted.</li>
+      <li>Subscription licences include updates and support for their term. When a term ends, the version
+          you installed continues to work; only newer releases require a current licence.</li>
+      <li>The Unity SDK is licensed separately under the Unity Asset Store EULA and may be embedded in
+          your own applications at no cost.</li>
+      <li>The software is provided as is, without warranty. Our liability is limited to the amount you paid.</li>
+    </ul>
+
+    <h3 id="privacy">Privacy</h3>
+    <ul>
+      <li><strong>Your video never reaches us.</strong> Streams travel directly between the headset and
+          your PC. We operate no media servers and cannot see, store or record what you stream.</li>
+      <li>When you activate a licence, the app sends the key and an anonymous machine identifier to our
+          payment provider so it can count activations. Nothing else leaves your computer.</li>
+      <li>Purchases are processed by Lemon Squeezy, which acts as merchant of record and handles your
+          payment details and tax. We never see your card number.</li>
+      <li>We keep your email address and purchase record so we can support you and honour refunds.
+          Ask us and we will delete it.</li>
+      <li>No analytics, no tracking, no advertising, ever.</li>
+    </ul>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <div>© 2026 Gowtham · Quest Viewer · Salem, Tamil Nadu, India</div>
+    <div>
+      <a href="#refunds">Refunds</a> ·
+      <a href="#terms">Terms</a> ·
+      <a href="#privacy">Privacy</a> ·
+      <a href="mailto:gowthambaskaran.xr@gmail.com">Contact</a>
+    </div>
+  </div>
+  <div class="wrap" style="margin-top:18px;font-size:12.5px;color:#4C5568">
+    Meta, Meta Quest and Oculus are trademarks of Meta Platforms, Inc. Unity is a trademark of Unity
+    Technologies. This product is not affiliated with or endorsed by either company.
+  </div>
+</footer>
+
+</body>
+</html>
+
   :root{
     --bg:#0A0C10; --surface:#12151C; --surface-2:#171B24; --line:#232936;
     --text:#E8ECF4; --muted:#9AA5B8; --dim:#6B7688;
