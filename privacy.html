@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy Policy — Quest Viewer</title>
+<meta name="description" content="Privacy policy for Quest Viewer, the Windows receiver for live Meta Quest headset streaming.">
+<style>
+  :root{
+    --bg:#0A0C10; --surface:#12151C; --line:#232936;
+    --text:#E8ECF4; --muted:#9AA5B8; --dim:#6B7688;
+    --violet:#7C5CFF; --violet-lite:#C9BAFF; --blue:#4F8CFF;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);
+    font:16px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;padding:56px 24px}
+  .wrap{max-width:760px;margin:0 auto}
+  a{color:var(--blue)}
+  h1{font-size:32px;letter-spacing:-.02em;margin-bottom:8px}
+  h2{font-size:19px;letter-spacing:-.01em;margin:34px 0 10px}
+  p,li{color:var(--muted);margin-bottom:10px}
+  ul{margin:0 0 10px 22px}
+  .updated{color:var(--dim);font-size:13.5px;margin-bottom:28px}
+  .back{display:inline-block;margin-bottom:28px;font-size:14px}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:12px;
+    padding:18px 20px;margin:22px 0}
+  .card p{margin:0;color:var(--text);font-size:15px}
+  strong{color:var(--text)}
+  footer{margin-top:44px;padding-top:20px;border-top:1px solid var(--line);
+    color:var(--dim);font-size:13.5px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <a class="back" href="./">← Quest Viewer</a>
+
+  <h1>Privacy Policy</h1>
+  <p class="updated">Last updated 14 August 2026</p>
+
+  <p>Quest Viewer is a Windows application that displays live video streamed from Meta Quest
+     headsets on your own network. This policy explains exactly what the application sends,
+     what we store, and what we do not.</p>
+
+  <div class="card">
+    <p><strong>Your video never reaches us.</strong> Streams travel directly between the headset
+       and your PC over your local network. We operate no media servers. We cannot see, store or
+       record anything you stream, and neither can anyone else.</p>
+  </div>
+
+  <h2>What the application sends</h2>
+  <p>Quest Viewer makes network connections in only three situations:</p>
+  <ul>
+    <li><strong>Headset discovery and streaming.</strong> The app broadcasts and listens on your
+        local network to find headsets, then opens a direct connection to them. This traffic never
+        leaves your network.</li>
+    <li><strong>Licence activation and validation.</strong> If you activate a paid licence, the app
+        sends the licence key and an anonymous machine identifier to Lemon Squeezy, our payment
+        provider, so it can enforce the machine limit on your licence. The identifier is a one-way
+        hash and cannot be used to identify you personally. The app re-checks the licence
+        periodically to confirm it is still valid.</li>
+    <li><strong>Opening a web page.</strong> Buttons such as “Buy” or “Upgrade” open your default
+        browser at our store. The app itself sends nothing in the process.</li>
+  </ul>
+  <p>The free tier does not contact any server other than for headset discovery on your own
+     network.</p>
+
+  <h2>What we store</h2>
+  <ul>
+    <li>If you buy a licence, we hold your email address and purchase record so we can provide
+        support and process refunds.</li>
+    <li>Payment details are handled entirely by Lemon Squeezy, which acts as merchant of record.
+        We never see or store your card number.</li>
+    <li>Settings, licence state and any recordings you make stay on your own computer, under
+        <code>%APPDATA%\QuestViewer</code>. Recordings are never uploaded.</li>
+  </ul>
+
+  <h2>What we do not do</h2>
+  <ul>
+    <li>No analytics, telemetry or usage tracking.</li>
+    <li>No advertising, and no sharing or selling of personal information to anyone.</li>
+    <li>No account required — the free tier and the trial need no sign-up at all.</li>
+  </ul>
+
+  <h2>Children</h2>
+  <p>Quest Viewer is a professional tool for developers and venues. It is not directed at children
+     and we do not knowingly collect information from them.</p>
+
+  <h2>Your rights</h2>
+  <p>You can ask us what we hold about you, ask for it to be corrected, or ask us to delete it.
+     Email the address below and we will action it. Deleting your purchase record may prevent us
+     from honouring a refund or reissuing a lost licence key, so we will confirm before doing so.</p>
+
+  <h2>Changes</h2>
+  <p>If this policy changes materially, we will update the date at the top of this page and note
+     the change in our release notes.</p>
+
+  <h2>Contact</h2>
+  <p>Quest Viewer is built and sold by Gowtham Baskaran, a sole proprietorship registered in
+     Salem, Tamil Nadu, India.</p>
+  <p>Email <a href="mailto:gowthambaskaran.xr@gmail.com">gowthambaskaran.xr@gmail.com</a>.
+     We reply within two business days.</p>
+
+  <footer>
+    <a href="./">Quest Viewer</a> ·
+    <a href="./#pricing">Pricing</a> ·
+    <a href="./#support">Support &amp; refunds</a>
+  </footer>
+
+</div>
+</body>
+</html>
