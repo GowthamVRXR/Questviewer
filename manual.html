@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>User Manual — Quest Viewer</title>
+<meta name="description" content="Complete user manual for Quest Viewer: installation, streaming from Meta Quest headsets, views, recording, licensing and troubleshooting.">
+<style>
+  :root{
+    --bg:#0A0C10; --surface:#12151C; --line:#232936;
+    --text:#E8ECF4; --muted:#9AA5B8; --dim:#6B7688;
+    --violet:#7C5CFF; --violet-lite:#C9BAFF; --blue:#4F8CFF;
+    --green:#3DDC84; --amber:#F5A524;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);
+    font:16px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;padding:56px 24px}
+  .wrap{max-width:820px;margin:0 auto}
+  a{color:var(--blue)}
+  h1{font-size:32px;letter-spacing:-.02em;margin-bottom:8px}
+  h2{font-size:21px;letter-spacing:-.01em;margin:44px 0 12px;padding-top:14px;
+     border-top:1px solid var(--line)}
+  h3{font-size:16px;margin:24px 0 8px;color:var(--text)}
+  p,li{color:var(--muted);margin-bottom:10px}
+  ul,ol{margin:0 0 12px 22px}
+  li{margin-bottom:6px}
+  .updated{color:var(--dim);font-size:13.5px;margin-bottom:28px}
+  .back{display:inline-block;margin-bottom:28px;font-size:14px}
+  .lede{color:var(--text);font-size:17px;margin-bottom:8px}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:12px;
+    padding:18px 20px;margin:22px 0}
+  .card p:last-child{margin-bottom:0}
+  .card.note{border-left:3px solid var(--blue)}
+  .card.warn{border-left:3px solid var(--amber)}
+  strong{color:var(--text)}
+  code{background:#1A1F2B;border:1px solid var(--line);border-radius:5px;
+    padding:1px 6px;font-size:13.5px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    color:var(--violet-lite)}
+  kbd{background:#1A1F2B;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;
+    padding:1px 7px;font-size:13px;font-family:inherit;color:var(--text)}
+  table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14.5px}
+  th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--text);font-weight:600;font-size:13px;text-transform:uppercase;letter-spacing:.04em}
+  td{color:var(--muted)}
+  td strong{color:var(--text)}
+  .toc{background:var(--surface);border:1px solid var(--line);border-radius:12px;
+    padding:18px 20px;margin:26px 0 6px}
+  .toc ol{margin:0 0 0 20px}
+  .toc li{margin-bottom:4px}
+  .toc a{text-decoration:none}
+  .toc a:hover{text-decoration:underline}
+  .sym{display:inline-block;min-width:1.6em;color:var(--violet-lite);font-weight:600}
+  footer{margin-top:48px;padding-top:20px;border-top:1px solid var(--line);
+    color:var(--dim);font-size:13.5px}
+  h2:first-of-type{border-top:none;padding-top:0}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <a class="back" href="./">← Quest Viewer</a>
+
+  <h1>Quest Viewer — User Manual</h1>
+  <p class="updated">For version 2.0.2 · Last updated 26 August 2026</p>
+
+  <p class="lede">Quest Viewer shows you what people in Meta Quest headsets are seeing, live, on a
+     Windows PC. One headset or a room full of them, side by side.</p>
+
+  <div class="card note">
+    <p><strong>Quest Viewer receives streams — it does not capture arbitrary Quest games.</strong>
+       The headset must be running an app built with the free
+       <a href="./#sdk">Quest Streaming SDK</a>. If you are an instructor or venue operator and
+       your VR content was made by someone else, ask the developer to add the SDK. It takes them
+       about ten minutes and costs nothing.</p>
+  </div>
+
+  <div class="toc">
+    <ol>
+      <li><a href="#requirements">What you need</a></li>
+      <li><a href="#install">Installing</a></li>
+      <li><a href="#first-run">First run and firewall</a></li>
+      <li><a href="#interface">The interface</a></li>
+      <li><a href="#streaming">Streaming, quality and multiple headsets</a></li>
+      <li><a href="#recording">Recording a session</a></li>
+      <li><a href="#licensing">Free tier, trial and licences</a></li>
+      <li><a href="#troubleshooting">Troubleshooting</a></li>
+      <li><a href="#privacy-data">Where your data lives</a></li>
+      <li><a href="#support">Getting help</a></li>
+    </ol>
+  </div>
+
+  <h2 id="requirements">1. What you need</h2>
+
+  <table>
+    <tr><th>Component</th><th>Requirement</th></tr>
+    <tr>
+      <td><strong>PC</strong></td>
+      <td>Windows 10 version 1809 or newer, or Windows 11. 64-bit.</td>
+    </tr>
+    <tr>
+      <td><strong>WebView2 Runtime</strong></td>
+      <td>Already present on Windows 11 and most Windows 10 machines. Video decoding depends on
+          it. If tiles appear but stay black, install it from
+          <a href="https://developer.microsoft.com/microsoft-edge/webview2/">Microsoft</a>.</td>
+    </tr>
+    <tr>
+      <td><strong>Headset</strong></td>
+      <td>Meta Quest 2, Quest 3, Quest 3S or Quest Pro, running an app built with the Quest
+          Streaming SDK.</td>
+    </tr>
+    <tr>
+      <td><strong>Network</strong></td>
+      <td>Headset and PC on the <strong>same Wi-Fi network</strong>. A wired PC on the same router
+          also works. See the network notes in
+          <a href="#troubleshooting">troubleshooting</a> — this is the most common source of
+          problems.</td>
+    </tr>
+  </table>
+
+  <p>No .NET installation is needed. No account, and no sign-up for the free tier.</p>
+
+  <h2 id="install">2. Installing</h2>
+
+  <h3>Microsoft Store — recommended</h3>
+  <p>Install from the
+     <a href="https://apps.microsoft.com/detail/9NKR9T8MK6R8">Microsoft Store</a>. The app is
+     signed and distributed by Microsoft, so there are no security warnings, and it updates
+     itself.</p>
+
+  <h3>Portable build</h3>
+  <p>For managed machines where the Store is blocked — arcades, training floors, locked-down
+     classrooms. Download the zip from the
+     <a href="https://github.com/GowthamVRXR/Questviewer/releases">releases page</a>, unzip it
+     anywhere, and run <code>QuestViewer.exe</code>.</p>
+  <ul>
+    <li><strong>Keep the folder contents together.</strong> The executable needs the files
+        alongside it.</li>
+    <li>Windows will warn that the file is unsigned. Choose <strong>More info → Run
+        anyway</strong>.</li>
+    <li>A SHA-256 checksum is published with each release if you need to verify the download.</li>
+  </ul>
+
+  <div class="card note">
+    <p>The portable build does not update itself. Check the releases page occasionally, or use the
+       Store version where you can.</p>
+  </div>
+
+  <h2 id="first-run">3. First run and firewall</h2>
+
+  <ol>
+    <li>Launch Quest Viewer. The title bar reads <em>“Listening for Quest devices on the
+        network…”</em></li>
+    <li><strong>Windows Firewall will prompt on first launch.</strong> Allow access on
+        <strong>Private networks</strong>. Discovery will not work if you deny it — this is the
+        single most common cause of “no headsets appear”.</li>
+    <li>Put on the headset and launch your VR app.</li>
+    <li>A tile appears in Quest Viewer within a few seconds, moves through
+        <em>Discovered → Connecting → Live</em>, and starts showing video.</li>
+  </ol>
+
+  <div class="card warn">
+    <p><strong>If you denied the firewall prompt by mistake</strong>, open <em>Windows Security →
+       Firewall &amp; network protection → Allow an app through firewall</em>, find Quest Viewer,
+       and tick <strong>Private</strong>. Then restart the app.</p>
+  </div>
+
+  <h2 id="interface">4. The interface</h2>
+
+  <h3>The sidebar</h3>
+  <p>The narrow strip down the left side switches what the main area shows.</p>
+
+  <table>
+    <tr><th>Icon</th><th>What it does</th></tr>
+    <tr><td><span class="sym">▦</span> <strong>Device grid</strong></td>
+        <td>Tile view. Every connected headset as a live thumbnail. The default.</td></tr>
+    <tr><td><span class="sym">☰</span> <strong>Device list</strong></td>
+        <td>A compact management list. Streams keep running — this only changes how they are
+            displayed.</td></tr>
+    <tr><td><span class="sym">🏷</span> <strong>Plans &amp; pricing</strong></td>
+        <td>All tiers, and the button to enter a licence key you already have.</td></tr>
+    <tr><td><span class="sym">?</span> <strong>Help &amp; documentation</strong></td>
+        <td>Opens this website in your browser.</td></tr>
+    <tr><td><span class="sym">☀</span> <strong>Theme</strong></td>
+        <td>Switches between dark and light. Applies immediately.</td></tr>
+  </table>
+
+  <h3>The title bar</h3>
+  <p>Left to right: the app name and version, the <strong>licence chip</strong>
+     (<code>FREE</code>, <code>TRIAL · 12d</code> or <code>PRO · 214d</code>) — click it to manage
+     your licence — then the connection status, and a pill showing how many headsets are live.</p>
+
+  <h3>Views</h3>
+  <ul>
+    <li><strong>Tile</strong> — the grid. Best for watching several headsets at once.</li>
+    <li><strong>List</strong> — compact rows. Best for managing many devices, or when you care
+        about names and states rather than pictures.</li>
+    <li><strong>Fullscreen</strong> — <strong>double-click any tile</strong>. Press
+        <kbd>Esc</kbd> to come back. A toolbar along the bottom carries stream quality and
+        recording.</li>
+  </ul>
+
+  <h2 id="streaming">5. Streaming, quality and multiple headsets</h2>
+
+  <h3>Starting and stopping</h3>
+  <p>Streams start automatically when a headset is discovered. To control one by hand,
+     <strong>right-click its tile</strong>:</p>
+  <ul>
+    <li><strong>Open Fullscreen</strong></li>
+    <li><strong>Start Stream</strong> / <strong>Stop Stream</strong></li>
+    <li><strong>Stream Quality</strong> — see below</li>
+    <li><strong>Start Recording</strong> / <strong>Stop Recording</strong></li>
+  </ul>
+
+  <h3>Stream quality</h3>
+  <p>Three presets, per headset. Higher settings need more Wi-Fi headroom, so if video stutters
+     with several headsets running, step down rather than blaming the network.</p>
+
+  <table>
+    <tr><th>Preset</th><th>Resolution</th><th>Frame rate</th><th>Bitrate</th></tr>
+    <tr><td><strong>Cool &amp; Light</strong></td><td>540p</td><td>30 fps</td><td>2.5 Mbps</td></tr>
+    <tr><td><strong>Balanced</strong></td><td>720p</td><td>60 fps</td><td>5 Mbps</td></tr>
+    <tr><td><strong>High</strong></td><td>1080p</td><td>60 fps</td><td>8 Mbps</td></tr>
+  </table>
+
+  <p><strong>Cool &amp; Light</strong> is named for the headset, not the picture. Encoding video
+     costs battery and generates heat inside the Quest; on a long session — a training day, a busy
+     arcade shift — the lower preset noticeably extends how long a headset stays comfortable.</p>
+
+  <div class="card note">
+    <p>The free tier caps at <strong>720p</strong>. <em>High</em> is available with the trial or a
+       Pro licence.</p>
+  </div>
+
+  <h3>Multiple headsets</h3>
+  <p>Every headset running your app appears on its own tile, discovered automatically. There are no
+     IP addresses to type and no pairing codes.</p>
+  <p>The <strong>free tier streams one headset at a time.</strong> A second headset is discovered
+     and listed, but its stream is held until the first one stops. The trial and paid tiers remove
+     the limit — the practical ceiling becomes your Wi-Fi, not the licence.</p>
+
+  <h2 id="recording">6. Recording a session</h2>
+
+  <p>Recording is a paid feature, available during the trial.</p>
+  <ol>
+    <li>Right-click a tile → <strong>Start Recording</strong>, or use the toolbar in
+        fullscreen.</li>
+    <li>Right-click → <strong>Stop Recording</strong> to finish and write the file.</li>
+  </ol>
+  <p>Recordings are saved on your own computer and are never uploaded anywhere. Each headset
+     records independently, so you can capture one participant while others stream normally.</p>
+
+  <div class="card warn">
+    <p><strong>Stop the recording before closing the app.</strong> A file still being written when
+       the app exits may be incomplete.</p>
+  </div>
+
+  <h2 id="licensing">7. Free tier, trial and licences</h2>
+
+  <table>
+    <tr><th></th><th>Free</th><th>Pro trial</th><th>Pro</th></tr>
+    <tr><td><strong>Headsets at once</strong></td><td>1</td><td>unlimited</td><td>unlimited</td></tr>
+    <tr><td><strong>Resolution</strong></td><td>up to 720p</td><td>full</td><td>full</td></tr>
+    <tr><td><strong>Recording</strong></td><td>—</td><td>yes</td><td>yes</td></tr>
+    <tr><td><strong>Computers</strong></td><td>unlimited</td><td>this PC</td><td>3 (10 on Organization)</td></tr>
+    <tr><td><strong>Cost</strong></td><td>free forever</td><td>15 days</td><td>from $150</td></tr>
+  </table>
+
+  <h3>The free tier</h3>
+  <p>No account, no sign-up, no expiry. Install it on as many machines as you like.</p>
+
+  <h3>The trial</h3>
+  <p>Click the licence chip in the title bar, then <strong>Start free trial</strong>. Fifteen days
+     of everything, no card and no account.</p>
+  <p><strong>It starts when you click it, not when you install.</strong> That is deliberate — you
+     should not lose trial days to a machine you set up last month and have not touched since. When
+     it ends, the app returns to the free tier. Nothing is deleted and nothing breaks.</p>
+
+  <h3>Activating a licence you have bought</h3>
+  <ol>
+    <li>Your key arrives by email immediately after purchase.</li>
+    <li>Click the licence chip in the title bar, or the pricing icon in the sidebar then
+        <strong>I have a key</strong>.</li>
+    <li>Paste the key and click <strong>Activate</strong>. The chip changes to
+        <code>PRO</code>.</li>
+  </ol>
+
+  <h3>Moving a licence to a different computer</h3>
+  <p>A licence covers a fixed number of computers — three on Pro, ten on Organization. To free a
+     slot, open the licence window on the machine you are retiring and click <strong>Deactivate
+     this PC</strong>. You can then activate the same key elsewhere. Do this as often as you
+     like.</p>
+  <p>If a machine died before you could deactivate it, email support and we will release the slot
+     for you.</p>
+
+  <h3>When an annual licence lapses</h3>
+  <p>An annual licence includes twelve months of updates and support. If you do not renew, the
+     app <strong>returns to the free tier</strong> — it does not stop working, and the version you
+     already installed keeps running. Lifetime licences never expire.</p>
+
+  <h3>Refunds</h3>
+  <p>Fourteen days, no forms. Email us and we will process it.</p>
+
+  <h2 id="troubleshooting">8. Troubleshooting</h2>
+
+  <h3>No headset appears</h3>
+  <p>Work down this list in order — the first three account for nearly every case.</p>
+  <ol>
+    <li><strong>Same network?</strong> The headset and PC must be on the same Wi-Fi. Check the
+        headset is not still connected to a phone hotspot or a guest SSID.</li>
+    <li><strong>Firewall allowed on Private networks?</strong> See
+        <a href="#first-run">first run</a>.</li>
+    <li><strong>Router blocking device-to-device traffic?</strong> Guest networks and a router
+        setting usually called <em>client isolation</em>, <em>AP isolation</em> or <em>wireless
+        isolation</em> stop devices seeing each other. This is common on hotel, campus and
+        corporate Wi-Fi. Use a normal network, or a dedicated router.</li>
+    <li><strong>Is the headset app actually built with the SDK?</strong> Quest Viewer cannot see
+        apps that do not include it.</li>
+    <li><strong>Is your PC's clock correct?</strong> This one is not obvious. Discovery messages
+        are timestamped and rejected if the two clocks disagree by more than a few minutes, so a
+        PC whose time has drifted will silently ignore every headset. Open <em>Settings → Time
+        &amp; language → Date &amp; time</em> and click <strong>Sync now</strong>.</li>
+  </ol>
+
+  <h3>A tile appears but the video is black</h3>
+  <p>Install the
+     <a href="https://developer.microsoft.com/microsoft-edge/webview2/">WebView2 Runtime</a> and
+     restart the app. Video rendering depends on it.</p>
+
+  <h3>Everything is capped at 720p</h3>
+  <p>That is the free tier. Start the trial or activate a licence.</p>
+
+  <h3>A second headset is discovered but will not stream</h3>
+  <p>Also the free tier — one stream at a time. The tile stays listed and starts as soon as the
+     first stream stops.</p>
+
+  <h3>Video stutters or lags with several headsets</h3>
+  <p>Wi-Fi bandwidth, almost always. Lower the stream quality on some or all headsets, put the PC
+     on Ethernet, and prefer 5 GHz over 2.4 GHz. A cheap access point shared with a building's
+     general traffic is not enough for several 1080p streams.</p>
+
+  <h3>The licence window is blank, or a key will not activate</h3>
+  <p>Check the machine has internet access — activation contacts our licensing provider. If the key
+     is correct and the machine limit is not exhausted, email support with the key and we will look
+     at it.</p>
+
+  <h2 id="privacy-data">9. Where your data lives</h2>
+
+  <ul>
+    <li><strong>Video never leaves your network.</strong> Streams travel directly between headset
+        and PC. We run no media servers, so we could not see your video even if we wanted to.</li>
+    <li><strong>Recordings stay on your computer.</strong> Never uploaded.</li>
+    <li><strong>Settings and licence state</strong> live under
+        <code>%APPDATA%\QuestViewer</code>.</li>
+    <li><strong>No analytics, telemetry or tracking</strong> of any kind.</li>
+  </ul>
+  <p>Full detail in the <a href="./privacy.html">privacy policy</a>.</p>
+
+  <h2 id="support">10. Getting help</h2>
+
+  <p>Email <a href="mailto:gowthambaskaran.xr@gmail.com">gowthambaskaran.xr@gmail.com</a>. We reply
+     within two business days; Organization licences get priority.</p>
+
+  <p>To make the first reply useful, include:</p>
+  <ul>
+    <li>Your Quest Viewer version (shown next to the app name in the title bar)</li>
+    <li>Which Quest model, and whether the tile appears at all</li>
+    <li>What you have already tried from the troubleshooting list above</li>
+  </ul>
+
+  <footer>
+    <a href="./">Quest Viewer</a> ·
+    <a href="./#pricing">Pricing</a> ·
+    <a href="./privacy.html">Privacy</a> ·
+    <a href="https://apps.microsoft.com/detail/9NKR9T8MK6R8">Microsoft Store</a> ·
+    <a href="https://github.com/GowthamVRXR/Questviewer">GitHub</a>
+  </footer>
+
+</div>
+</body>
+</html>
