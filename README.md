@@ -1,3 +1,4 @@
+[README.md](https://github.com/user-attachments/files/31456096/README.md)
 # Quest Viewer
 
 **Live VR streaming from Meta Quest to your Windows PC.** Under 100 ms on your own Wi-Fi,
@@ -68,7 +69,16 @@ Video travels directly from the headset to your PC. It never passes through our 
 because we do not run any. No analytics, no tracking, no telemetry.
 [Full policy](https://gowthamvrxr.github.io/Questviewer/privacy.html).
 
+## Terms
+
+[Terms of Service](https://gowthamvrxr.github.io/Questviewer/terms.html) ·
+[Refund policy](https://gowthamvrxr.github.io/Questviewer/#refunds)
+
 ## Support
+
+**[Read the user manual](https://gowthamvrxr.github.io/Questviewer/manual.html)** — installation,
+streaming and stream quality, recording, licence activation, moving a licence between computers,
+and troubleshooting.
 
 Email **gowthambaskaran.xr@gmail.com** — replies within two business days.
 
