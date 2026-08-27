@@ -56,10 +56,12 @@
         local network to find headsets, then opens a direct connection to them. This traffic never
         leaves your network.</li>
     <li><strong>Licence activation and validation.</strong> If you activate a paid licence, the app
-        sends the licence key and an anonymous machine identifier to Lemon Squeezy, our payment
-        provider, so it can enforce the machine limit on your licence. The identifier is a one-way
-        hash and cannot be used to identify you personally. The app re-checks the licence
-        periodically to confirm it is still valid.</li>
+        sends the licence key, your computer's name (for example <code>DESKTOP-A1B2</code>) and a
+        short one-way hash to Dodo Payments, our payment provider, so it can enforce the machine
+        limit on your licence. The computer name is sent so that you can recognise your own
+        machines when releasing a licence slot; the hash distinguishes two computers that share a
+        name. Neither identifies you personally. The app re-checks the licence periodically to
+        confirm it is still valid.</li>
     <li><strong>Opening a web page.</strong> Buttons such as “Buy” or “Upgrade” open your default
         browser at our store. The app itself sends nothing in the process.</li>
   </ul>
@@ -70,7 +72,7 @@
   <ul>
     <li>If you buy a licence, we hold your email address and purchase record so we can provide
         support and process refunds.</li>
-    <li>Payment details are handled entirely by Lemon Squeezy, which acts as merchant of record.
+    <li>Payment details are handled entirely by Dodo Payments, which acts as merchant of record.
         We never see or store your card number.</li>
     <li>Settings, licence state and any recordings you make stay on your own computer, under
         <code>%APPDATA%\QuestViewer</code>. Recordings are never uploaded.</li>
