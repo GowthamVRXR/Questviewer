@@ -1,4 +1,4 @@
-[README.md](https://github.com/user-attachments/files/31456096/README.md)
+[README.md](https://github.com/user-attachments/files/31551580/README.md)
 # Quest Viewer
 
 **Live VR streaming from Meta Quest to your Windows PC.** Under 100 ms on your own Wi-Fi,
@@ -30,7 +30,7 @@ automatically — no IP addresses, no pairing codes, no router changes.
 Signed and distributed by Microsoft, so there are no security warnings, and it keeps itself
 up to date.
 
-### [Download the portable build](https://github.com/GowthamVRXR/Questviewer/releases/download/v2.0.2/QuestViewer-v2.0.2-win-x64.zip)
+### [Download the portable build](https://github.com/GowthamVRXR/Questviewer/releases/download/v2.0.4/QuestViewer-v2.0.4-win-x64.zip)
 
 For managed machines where the Store is blocked or unavailable — arcades, training floors,
 locked-down classrooms. Unzip anywhere and run `QuestViewer.exe`, keeping the folder contents
