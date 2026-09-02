@@ -3,428 +3,544 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Quest Viewer — Live VR streaming from Meta Quest to your PC</title>
-<meta name="description" content="Quest Viewer displays your Unity VR application, running on Meta Quest headsets, on a Windows PC over WebRTC. Sub-100ms, peer-to-peer, no capture card. For demos, QA and instructor-led training. Free Unity SDK, free for one headset.">
-<meta property="og:title" content="Quest Viewer — Live VR streaming from Meta Quest to your PC">
-<meta property="og:description" content="Your VR app, live on the big screen. Sub-100ms WebRTC streaming from Meta Quest to Windows, for demos, QA and training.">
+<title>Quest Viewer — See inside your Unity VR app, live on a PC</title>
+<meta name="description" content="Quest Viewer streams your Unity VR application from Meta Quest headsets to a Windows PC. Sub-100ms, peer-to-peer, no capture card, no code to write. Free Unity SDK with full source. Free for one headset.">
+<meta property="og:title" content="Quest Viewer — Your VR app, live on the big screen">
+<meta property="og:description" content="Sub-100ms WebRTC streaming from Meta Quest to Windows. No capture card, no code to write. Free for one headset.">
 <meta property="og:type" content="website">
+<meta name="theme-color" content="#07080B">
 <style>
   :root{
-    --bg:#0A0C10; --surface:#12151C; --surface-2:#171B24; --line:#232936;
-    --text:#E8ECF4; --muted:#9AA5B8; --dim:#6B7688;
-    --violet:#7C5CFF; --violet-lite:#C9BAFF; --blue:#4F8CFF; --mint:#3DD8A0;
+    --bg:#07080B; --s1:#0E1116; --s2:#141821; --s3:#1A1F2A;
+    --line:#1C222D; --line-2:#2A3242;
+    --text:#F5F7FB; --muted:#9FAABC; --dim:#67728A;
+    --violet:#7C5CFF; --violet-lite:#C9BAFF; --blue:#4F8CFF; --mint:#3DD8A0; --amber:#FFB454;
     --grad:linear-gradient(135deg,#7C5CFF 0%,#4F8CFF 100%);
-    --radius:14px; --maxw:1120px;
+    --maxw:1180px; --r:16px; --ease:cubic-bezier(.22,1,.36,1);
   }
   *{box-sizing:border-box;margin:0;padding:0}
-  html{scroll-behavior:smooth}
-  body{
-    background:var(--bg);color:var(--text);
-    font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
-    -webkit-font-smoothing:antialiased;
-    position:relative;overflow-x:hidden;
-  }
-  /* ambient glow — sits behind everything, gives the page depth */
-  body::before{
-    content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
-    background:
-      radial-gradient(760px 420px at 12% -8%, rgba(124,92,255,.20), transparent 65%),
-      radial-gradient(680px 400px at 88% 4%, rgba(79,140,255,.14), transparent 62%),
-      radial-gradient(900px 500px at 50% 100%, rgba(61,216,160,.06), transparent 70%);
-  }
-  a{color:var(--blue);text-decoration:none}
-  a:hover{text-decoration:underline}
-  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
-  section{padding:72px 0;border-top:1px solid var(--line)}
-  h1,h2,h3{line-height:1.2;letter-spacing:-.02em}
-  h2{font-size:34px;margin-bottom:12px}
-  h3{font-size:17px;margin-bottom:6px}
-  .lede{color:var(--muted);max-width:62ch;margin-bottom:36px;font-size:16.5px}
-  /* small numbered label above each section heading */
-  .eyebrow{display:flex;align-items:center;gap:10px;font-size:12px;letter-spacing:.14em;
-    text-transform:uppercase;color:var(--violet-lite);margin-bottom:14px;font-weight:600}
-  .eyebrow::after{content:"";height:1px;flex:1;max-width:120px;
-    background:linear-gradient(90deg,rgba(124,92,255,.5),transparent)}
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+  body{background:var(--bg);color:var(--text);overflow-x:hidden;
+    font:400 16px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+  img{display:block;max-width:100%}
+  ::selection{background:rgba(124,92,255,.34)}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px}
+  section{padding:116px 0}
+  .rule{border-top:1px solid var(--line)}
+  h1,h2,h3{line-height:1.08;letter-spacing:-.035em;font-weight:600}
+  h1{font-size:clamp(38px,5.8vw,64px)}
+  h2{font-size:clamp(28px,4vw,42px);letter-spacing:-.03em}
+  h3{font-size:18px;letter-spacing:-.02em;font-weight:600}
+  .lede{color:var(--muted);font-size:clamp(16px,1.55vw,18.5px);max-width:60ch;line-height:1.65}
+  .eyebrow{font-size:11.5px;letter-spacing:.17em;text-transform:uppercase;color:var(--violet-lite);
+    font-weight:600;margin-bottom:18px}
+  .small{font-size:13.5px;color:var(--dim);line-height:1.65}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,"JetBrains Mono",Consolas,monospace}
 
-  /* ---- header ---- */
-  header{position:sticky;top:0;z-index:20;background:rgba(10,12,16,.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
-  .nav{display:flex;align-items:center;gap:28px;height:62px}
-  .brand{display:flex;align-items:center;gap:10px;font-weight:650;letter-spacing:-.01em;color:var(--text)}
-  .brand:hover{text-decoration:none}
-  .mark{width:26px;height:26px;border-radius:8px;background:var(--grad);flex:none}
-  .nav nav{margin-left:auto;display:flex;gap:24px;flex-wrap:wrap}
-  .nav nav a{color:var(--muted);font-size:14.5px}
-  .nav nav a:hover{color:var(--text);text-decoration:none}
+  header{position:sticky;top:0;z-index:60;background:rgba(7,8,11,.72);
+    backdrop-filter:saturate(180%) blur(14px);border-bottom:1px solid transparent;transition:.3s var(--ease)}
+  header.stuck{border-bottom-color:var(--line);background:rgba(7,8,11,.92)}
+  .nav{display:flex;align-items:center;gap:30px;height:66px}
+  .brand{display:flex;align-items:center;gap:11px;font-weight:600;letter-spacing:-.02em}
+  .mark{width:27px;height:27px;border-radius:9px;background:var(--grad);display:grid;place-items:center;
+    color:#fff;font-size:14px;font-weight:700;flex:none}
+  .nav .links{margin-left:auto;display:flex;gap:28px;align-items:center}
+  .nav .links a{color:var(--muted);font-size:14.5px;transition:color .2s}
+  .nav .links a:hover{color:var(--text)}
+  @media (max-width:820px){ .nav .links a:not(.btn){display:none} }
 
-  /* ---- hero ---- */
-  .hero{padding:96px 0 72px;border-top:none}
-  .kicker{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;letter-spacing:.1em;
-    text-transform:uppercase;font-weight:600;
-    color:var(--violet-lite);
-    border:1px solid rgba(124,92,255,.38);
-    background:rgba(124,92,255,.12);
-    padding:6px 14px;border-radius:999px;margin-bottom:24px}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:14px 26px;
+    border-radius:12px;font-weight:600;font-size:15px;border:1px solid transparent;cursor:pointer;
+    white-space:nowrap;transition:transform .2s var(--ease),box-shadow .25s var(--ease),border-color .2s,filter .2s}
+  .btn-primary{background:var(--grad);color:#fff;box-shadow:0 10px 34px -14px rgba(124,92,255,.95)}
+  .btn-primary:hover{transform:translateY(-2px);filter:brightness(1.06)}
+  .btn-ghost{border-color:var(--line-2);color:var(--text);background:var(--s1)}
+  .btn-ghost:hover{border-color:rgba(124,92,255,.5);transform:translateY(-2px)}
+  .btn-sm{padding:9px 17px;font-size:14px;border-radius:10px}
+
+  .rev{opacity:0;transform:translateY(12px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+  .rev.in{opacity:1;transform:none}
+
+  /* ── audience switch ──────────────────────────────────────────────────────
+     Two audiences with opposite instincts. A developer wants to know the effort
+     cost and whether it locks them in; a venue wants to know it survives a busy
+     Saturday. One page cannot lead with both, so the visitor picks and the page
+     answers them. Everything stays in the DOM for search engines. */
+  .aud{display:inline-flex;background:var(--s1);border:1px solid var(--line);border-radius:999px;
+    padding:5px;gap:3px;margin-bottom:32px}
+  .aud button{border:0;background:transparent;color:var(--muted);cursor:pointer;font:inherit;
+    font-size:14px;font-weight:600;padding:9px 20px;border-radius:999px;transition:.3s var(--ease)}
+  .aud button:hover{color:var(--text)}
+  .aud button[aria-selected="true"]{background:var(--grad);color:#fff}
+  [data-aud]{display:none} [data-aud].show{display:block}
+
+  .hero{padding:96px 0 0}
+  .kicker{display:inline-flex;align-items:center;gap:9px;font-size:12px;letter-spacing:.09em;
+    text-transform:uppercase;font-weight:600;color:var(--violet-lite);
+    border:1px solid rgba(124,92,255,.28);background:rgba(124,92,255,.08);
+    padding:7px 15px;border-radius:999px;margin-bottom:26px}
   .kicker::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--mint);
-    box-shadow:0 0 0 3px rgba(61,216,160,.18)}
-  .hero h1{font-size:clamp(38px,5.6vw,60px);max-width:16ch;margin-bottom:20px}
+    box-shadow:0 0 0 3px rgba(61,216,160,.16)}
+  .hero h1{max-width:17ch;margin-bottom:22px}
   .hero h1 em{font-style:normal;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
-  .hero p{color:var(--muted);font-size:18.5px;max-width:60ch;margin-bottom:32px}
-  .cta{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
-  .btn{display:inline-block;padding:13px 24px;border-radius:11px;font-weight:600;font-size:15px;
-    border:1px solid transparent;transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease}
-  .btn-primary{background:var(--grad);color:#fff;box-shadow:0 8px 24px -10px rgba(124,92,255,.85)}
-  .btn-primary:hover{text-decoration:none;transform:translateY(-1px);box-shadow:0 14px 30px -10px rgba(124,92,255,.95)}
-  .btn-ghost{border-color:var(--line);color:var(--text);background:var(--surface)}
-  .btn-ghost:hover{border-color:rgba(124,92,255,.45);text-decoration:none;transform:translateY(-1px)}
-  .note{color:var(--dim);font-size:13.5px;margin-top:16px;max-width:66ch}
-  code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.92em;
-    background:var(--surface-2);border:1px solid var(--line);border-radius:5px;padding:1px 6px}
+  .hero .cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:30px}
+  .fine{margin-top:18px;font-size:13.5px;color:var(--dim)}
+  .constraint{margin-top:24px;max-width:64ch;font-size:14px;color:var(--muted);
+    border-left:2px solid var(--line-2);padding:2px 0 2px 16px;line-height:1.6}
+  .constraint b{color:var(--text);font-weight:600}
 
-  /* ---- hero stat strip ---- */
-  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;
-    margin-top:44px;background:var(--line);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
-  .stats div{background:var(--surface);padding:20px 22px}
-  .stats b{display:block;font-size:26px;font-weight:700;letter-spacing:-.03em;
-    background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
-  .stats span{display:block;color:var(--dim);font-size:13px;margin-top:4px}
-
-  /* ---- product shot ---- */
-  .shot{margin-top:52px;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;
-    background:var(--surface);box-shadow:0 40px 90px -50px rgba(0,0,0,.95),0 0 0 1px rgba(124,92,255,.08)}
-  .shot svg,.shot img{display:block;width:100%;height:auto}
-
-  /* ---- hero carousel ----
-     The screenshots differ in aspect ratio (1.41 to 1.78), so the frame is a
-     fixed 16/10 box with object-fit:contain. Cropping would cut UI text off the
-     edges; letterboxing costs a little dead space and keeps every screenshot
-     readable. */
-  .carousel{margin-top:52px;position:relative}
-  .frame{position:relative;aspect-ratio:16/10;border:1px solid var(--line);
-    border-radius:var(--radius);overflow:hidden;background:var(--surface);
-    box-shadow:0 40px 90px -50px rgba(0,0,0,.95),0 0 0 1px rgba(124,92,255,.08)}
-  .frame img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;
-    opacity:0;transform:scale(1.015);transition:opacity .55s ease,transform .55s ease;
-    pointer-events:none}
-  .frame img.on{opacity:1;transform:scale(1);pointer-events:auto}
-
-  .arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:3;
-    width:42px;height:42px;border-radius:50%;border:1px solid var(--line);
-    background:rgba(10,12,16,.72);backdrop-filter:blur(8px);color:var(--text);
-    font-size:17px;line-height:1;cursor:pointer;display:grid;place-items:center;
-    opacity:0;transition:opacity .2s ease,border-color .2s ease,background .2s ease}
+  /* ── carousel ── */
+  .carousel{margin-top:60px;position:relative}
+  .frame{position:relative;aspect-ratio:16/10;border:1px solid var(--line);border-radius:var(--r);
+    overflow:hidden;background:var(--s1);
+    box-shadow:0 60px 120px -60px #000,0 0 0 1px rgba(124,92,255,.07),0 0 90px -40px rgba(124,92,255,.26)}
+  .frame img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0;
+    transform:scale(1.012);transition:opacity .6s var(--ease),transform .6s var(--ease)}
+  .frame img.on{opacity:1;transform:none}
+  .arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:3;width:44px;height:44px;
+    border-radius:50%;border:1px solid var(--line-2);background:rgba(7,8,11,.78);backdrop-filter:blur(10px);
+    color:var(--text);font-size:18px;cursor:pointer;display:grid;place-items:center;opacity:0;transition:.25s}
   .carousel:hover .arrow,.arrow:focus-visible{opacity:1}
-  .arrow:hover{border-color:rgba(124,92,255,.55);background:rgba(18,21,28,.9)}
-  .arrow.prev{left:14px}
-  .arrow.next{right:14px}
+  .arrow:hover{border-color:rgba(124,92,255,.55)}
+  .arrow.prev{left:16px} .arrow.next{right:16px}
+  .dots{display:flex;gap:9px;justify-content:center;margin-top:20px}
+  .dots button{width:8px;height:8px;padding:0;border:0;border-radius:50%;cursor:pointer;
+    background:var(--line-2);transition:.3s var(--ease)}
+  .dots button[aria-current="true"]{width:28px;border-radius:999px;background:var(--grad)}
+  .slide-cap{color:var(--dim);font-size:13.5px;margin-top:14px;text-align:center;min-height:42px;
+    max-width:66ch;margin-inline:auto}
 
-  .dots{display:flex;gap:9px;justify-content:center;margin-top:18px}
-  .dots button{width:8px;height:8px;padding:0;border-radius:50%;border:0;cursor:pointer;
-    background:var(--line);transition:background .25s ease,width .25s ease}
-  .dots button:hover{background:var(--dim)}
-  .dots button[aria-current="true"]{width:26px;border-radius:999px;background:var(--grad)}
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:40px;margin-top:84px;text-align:center}
+  .stats b{display:block;font-size:36px;font-weight:600;letter-spacing:-.045em;
+    background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .stats span{display:block;color:var(--dim);font-size:13px;margin-top:6px}
 
-  .slide-cap{color:var(--dim);font-size:13.5px;margin-top:14px;text-align:center;
-    min-height:40px;max-width:70ch;margin-left:auto;margin-right:auto;
-    transition:opacity .3s ease}
+  /* ── the "no code" proof ── */
+  .proof{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:52px;align-items:start}
+  @media (max-width:900px){ .proof{grid-template-columns:1fr} }
+  .term{background:#0A0D12;border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+  .term .bar{display:flex;align-items:center;gap:7px;padding:12px 16px;border-bottom:1px solid var(--line);
+    background:var(--s1)}
+  .term .bar i{width:10px;height:10px;border-radius:50%;background:var(--line-2);display:block}
+  .term .bar span{margin-left:8px;font-size:12px;color:var(--dim)}
+  .term pre{padding:22px;font-size:13.5px;line-height:2;color:var(--muted);overflow-x:auto}
+  .term .k{color:var(--violet-lite)} .term .g{color:var(--mint)} .term .c{color:#4A5568}
+  .steps3{display:grid;gap:2px;background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+  .steps3 div{background:var(--s1);padding:22px 24px}
+  .steps3 .n{font-size:11.5px;font-weight:600;color:var(--violet-lite);letter-spacing:.12em;margin-bottom:7px}
+  .steps3 h3{margin-bottom:5px;font-size:16px}
+  .steps3 p{color:var(--muted);font-size:14px;line-height:1.6}
 
-  /* Anyone who has asked the OS to stop animating gets no auto-advance and no
-     transitions — the carousel still works, it just changes instantly. */
-  @media (prefers-reduced-motion: reduce){
-    .frame img,.slide-cap{transition:none}
-    .frame img{transform:none}
-  }
-  /* screenshot gallery */
-  .gallery{display:grid;gap:20px;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));margin-top:8px}
-  .gallery figure{margin:0}
-  .gallery img{display:block;width:100%;height:auto;border:1px solid var(--line);
-    border-radius:var(--radius);background:var(--surface);
-    box-shadow:0 24px 60px -40px rgba(0,0,0,.9)}
-  .gallery figcaption{color:var(--dim);font-size:13px;margin-top:10px}
-  .caption{color:var(--dim);font-size:13px;margin-top:14px}
+  /* ── bento ── */
+  .bento{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-top:52px}
+  .bento>div{background:var(--s1);border:1px solid var(--line);border-radius:var(--r);padding:30px;
+    transition:border-color .3s,transform .3s var(--ease),background .3s}
+  .bento>div:hover{border-color:var(--line-2);transform:translateY(-3px);background:var(--s2)}
+  .b3{grid-column:span 3} .b2{grid-column:span 2} .b6{grid-column:span 6}
+  @media (max-width:900px){ .b3,.b2,.b6{grid-column:span 6} }
+  .bento h3{margin-bottom:9px}
+  .bento p{color:var(--muted);font-size:14.5px;line-height:1.65}
+  .ic{width:36px;height:36px;border-radius:10px;background:rgba(124,92,255,.11);
+    border:1px solid rgba(124,92,255,.2);display:grid;place-items:center;margin-bottom:16px}
+  .ic svg{width:18px;height:18px;stroke:var(--violet-lite);fill:none;stroke-width:1.6;
+    stroke-linecap:round;stroke-linejoin:round}
 
-  /* ---- grids ---- */
-  .grid{display:grid;gap:20px;grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
-  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px;
-    transition:border-color .18s ease,transform .18s ease,background .18s ease}
-  .card:hover{border-color:rgba(124,92,255,.35);transform:translateY(-2px);background:var(--surface-2)}
-  .card p{color:var(--muted);font-size:14.5px}
-  .dot{width:9px;height:9px;border-radius:3px;background:var(--grad);display:inline-block;margin-right:9px;vertical-align:middle}
+  /* ── interactive room demo ── */
+  .demo{background:var(--s1);border:1px solid var(--line);border-radius:var(--r);padding:34px;margin-top:14px}
+  .demo .head{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+  .demo .cnt{font-size:32px;font-weight:600;letter-spacing:-.04em;
+    background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .tiles{display:grid;grid-template-columns:repeat(5,1fr);gap:9px;margin-bottom:22px}
+  .tile{aspect-ratio:16/10;border-radius:9px;border:1px solid var(--line);background:var(--s2);
+    display:grid;place-items:center;font-size:10px;color:var(--dim);
+    transition:.35s var(--ease);opacity:.28}
+  .tile.live{opacity:1;border-color:rgba(79,140,255,.42);
+    background:linear-gradient(160deg,rgba(79,140,255,.16),var(--s2));color:var(--muted)}
+  .tile.locked{opacity:.5;border-style:dashed;border-color:rgba(255,180,84,.35);color:var(--amber)}
+  input[type=range]{width:100%;accent-color:var(--violet);cursor:pointer}
+  .verdict{margin-top:16px;font-size:14px;color:var(--muted);min-height:44px;line-height:1.6}
+  .verdict b{color:var(--text);font-weight:600}
 
-  /* ---- steps ---- */
-  ol.steps{list-style:none;counter-reset:s;display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
-  ol.steps li{counter-increment:s;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px}
-  ol.steps li::before{content:counter(s);display:flex;align-items:center;justify-content:center;
-    width:28px;height:28px;border-radius:9px;background:var(--surface-2);border:1px solid var(--line);
-    color:var(--violet);font-weight:700;font-size:13px;margin-bottom:12px}
-  ol.steps p{color:var(--muted);font-size:14.5px}
+  /* ── comparison ── */
+  table{width:100%;border-collapse:collapse;font-size:14.5px;margin-top:44px}
+  th,td{text-align:left;padding:15px 16px;border-bottom:1px solid var(--line)}
+  th{color:var(--dim);font-weight:600;font-size:11.5px;letter-spacing:.09em;text-transform:uppercase}
+  tbody tr:hover{background:var(--s1)}
+  .yes{color:var(--mint)} .no{color:var(--dim)}
+  td.us{color:var(--text);font-weight:500}
+  th.us{color:var(--violet-lite)}
 
-  /* ---- pricing ---- */
-  .tiers{display:grid;gap:20px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));align-items:start}
-  .tier{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:26px;display:flex;flex-direction:column;height:100%;
-    transition:border-color .18s ease,transform .18s ease}
-  .tier:hover{border-color:rgba(124,92,255,.32);transform:translateY(-2px)}
-  .tier.featured{border-color:rgba(124,92,255,.5);background:linear-gradient(180deg,#181340 0%,var(--surface) 62%);
-    box-shadow:0 24px 60px -34px rgba(124,92,255,.8)}
-  .tier .name{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;
-    display:flex;align-items:center;flex-wrap:wrap;gap:6px}
-  .tier .price{font-size:36px;font-weight:700;letter-spacing:-.03em}
-  .tier .price small{font-size:14px;font-weight:500;color:var(--dim);letter-spacing:0}
-  .tier .sub{color:var(--dim);font-size:13.5px;margin:6px 0 18px}
-  .tier ul{list-style:none;display:grid;gap:9px;font-size:14.5px;color:var(--muted);margin-bottom:20px}
-  .tier ul li::before{content:"—";color:var(--violet);margin-right:9px}
-  .tier .btn{margin-top:auto;text-align:center}
-  .badge{display:inline-block;font-size:11px;letter-spacing:.07em;text-transform:uppercase;
-    background:var(--grad);color:#fff;padding:3px 9px;border-radius:999px}
-
-  /* ---- term toggle + plan cards ---- */
-  /* Segmented pill. One control changes every price on the page, so the five
-     SKUs read as three plans instead of five competing cards. */
-  .seg{display:inline-flex;background:var(--surface);border:1px solid var(--line);
-    border-radius:999px;padding:4px;gap:2px;margin:0 auto 34px;position:relative;left:50%;transform:translateX(-50%)}
-  .seg button{appearance:none;border:0;background:transparent;color:var(--muted);cursor:pointer;
-    font:inherit;font-size:14px;font-weight:600;padding:9px 22px;border-radius:999px;
-    transition:background .18s ease,color .18s ease}
+  /* ── pricing ── */
+  .seg{display:inline-flex;background:var(--s1);border:1px solid var(--line);border-radius:999px;
+    padding:5px;gap:3px;margin-bottom:38px}
+  .seg button{border:0;background:transparent;color:var(--muted);cursor:pointer;font:inherit;
+    font-size:14px;font-weight:600;padding:10px 22px;border-radius:999px;transition:.3s var(--ease)}
   .seg button:hover{color:var(--text)}
   .seg button[aria-selected="true"]{background:var(--grad);color:#fff}
-  .save{font-size:11px;font-weight:600;opacity:.85;margin-left:6px}
+  .save{font-size:11.5px;opacity:.9;margin-left:5px}
+  .plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(268px,1fr));gap:16px}
+  .plan{background:var(--s1);border:1px solid var(--line);border-radius:20px;padding:32px;
+    display:flex;flex-direction:column;transition:border-color .3s,transform .3s var(--ease)}
+  .plan:hover{transform:translateY(-3px);border-color:var(--line-2)}
+  .plan.top{border-color:rgba(79,140,255,.5);
+    background:linear-gradient(180deg,rgba(79,140,255,.15) 0%,rgba(79,140,255,.045) 30%,var(--s1) 72%);
+    box-shadow:0 40px 90px -50px rgba(79,140,255,.7)}
+  .pname{font-size:21px;font-weight:600;letter-spacing:-.025em;display:flex;align-items:center;gap:10px;
+    flex-wrap:wrap;margin-bottom:24px}
+  .badge{font-size:11.5px;font-weight:600;padding:4px 11px;border-radius:999px;
+    background:rgba(79,140,255,.16);color:#A8CBFF}
+  .amt{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;min-height:46px}
+  .was{font-size:21px;font-weight:600;color:var(--dim);text-decoration:line-through;text-decoration-thickness:2px}
+  .now{font-size:40px;font-weight:600;letter-spacing:-.04em;line-height:1}
+  .per{font-size:13px;color:var(--dim)}
+  .pnote{font-size:12.5px;color:var(--dim);margin:10px 0 24px;min-height:36px;line-height:1.55}
+  .pcta{display:block;text-align:center;font-weight:600;font-size:14.5px;padding:14px;border-radius:12px;
+    margin-bottom:26px;border:1px solid transparent;transition:.2s var(--ease)}
+  .pcta.fill{background:var(--grad);color:#fff}
+  .pcta.fill:hover{transform:translateY(-2px);filter:brightness(1.06)}
+  .pcta.line{border-color:var(--line-2);color:var(--text);background:var(--s2)}
+  .pcta.line:hover{border-color:rgba(124,92,255,.5);transform:translateY(-2px)}
+  .pfeat{font-size:13.5px;font-weight:600;margin-bottom:15px}
+  .rows{list-style:none;display:grid;gap:12px;font-size:14px;color:var(--muted)}
+  .rows li{display:flex;gap:11px;align-items:flex-start;line-height:1.5}
+  .rows svg{flex:none;width:16px;height:16px;margin-top:3px;stroke:var(--violet-lite);fill:none;
+    stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .rows li.off{color:var(--dim)} .rows li.off svg{stroke:var(--dim)}
+  .pfoot{margin-top:auto;padding-top:24px;font-size:12.5px;color:var(--dim)}
 
-  /* Featured card: a violet wash fading into the card, plus a brighter hairline.
-     Subtle on purpose — it should mark the recommendation, not shout. */
-  .plan{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:30px 26px;
-    display:flex;flex-direction:column;transition:border-color .18s ease,transform .18s ease}
-  .plan:hover{transform:translateY(-2px);border-color:rgba(124,92,255,.3)}
-  .plan.hero{border-color:rgba(79,140,255,.6);
-    background:linear-gradient(180deg,rgba(79,140,255,.30) 0%,rgba(79,140,255,.13) 26%,rgba(79,140,255,.04) 58%,var(--surface) 100%);
-    box-shadow:0 30px 70px -40px rgba(79,140,255,.7)}
-  .plan .pname{font-size:23px;font-weight:650;letter-spacing:-.02em;margin-bottom:20px;
-    display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-  .plan .amt{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;min-height:46px}
-  .plan .was{font-size:24px;font-weight:600;color:var(--dim);text-decoration:line-through;
-    text-decoration-thickness:2px;letter-spacing:-.02em}
-  .plan .now{font-size:40px;font-weight:700;letter-spacing:-.035em;line-height:1}
-  .plan .per{font-size:13.5px;color:var(--dim)}
-  .plan .terms{font-size:13px;color:var(--dim);margin:8px 0 22px;min-height:20px}
-  .plan .cta{display:block;text-align:center;font-weight:600;font-size:15px;padding:13px 20px;
-    border-radius:999px;margin-bottom:24px;border:1px solid transparent}
-  .plan .cta.fill{background:var(--grad);color:#fff;box-shadow:0 10px 26px -12px rgba(124,92,255,.9)}
-  .plan .cta.fill:hover{text-decoration:none;filter:brightness(1.07)}
-  .plan .cta.line{border-color:var(--line);color:var(--text);background:var(--surface-2)}
-  .plan .cta.line:hover{text-decoration:none;border-color:rgba(124,92,255,.45)}
-  /* Current-plan state: deliberately inert. Nothing to buy, nothing to click. */
-  .plan .cta.current{border-color:var(--line);color:var(--dim);cursor:default;background:transparent}
-  .plan .feat{font-size:14px;font-weight:600;margin-bottom:14px}
-  .plan ul.rows{list-style:none;display:grid;gap:13px;font-size:14.5px;color:var(--muted);margin:0}
-  .plan ul.rows li{display:flex;gap:11px;align-items:flex-start;line-height:1.5}
-  .plan ul.rows svg{flex:none;width:17px;height:17px;margin-top:2px;color:var(--violet-lite)}
-  .plan ul.rows li.off{color:var(--dim)}
-  .plan ul.rows li.off svg{color:var(--dim)}
-  .plan .foot{margin-top:auto;padding-top:22px;font-size:12.5px;color:var(--dim)}
+  /* ── faq ── */
+  .faq{margin-top:48px;border-top:1px solid var(--line)}
+  details{border-bottom:1px solid var(--line)}
+  summary{cursor:pointer;padding:22px 44px 22px 0;font-size:16.5px;font-weight:500;
+    list-style:none;position:relative;transition:color .2s}
+  summary::-webkit-details-marker{display:none}
+  summary:hover{color:var(--violet-lite)}
+  summary::after{content:"+";position:absolute;right:6px;top:20px;font-size:22px;color:var(--dim);
+    font-weight:300;transition:transform .3s var(--ease),color .2s}
+  details[open] summary::after{transform:rotate(45deg);color:var(--violet-lite)}
+  details p{color:var(--muted);font-size:14.5px;padding:0 40px 24px 0;line-height:1.7;max-width:76ch}
 
-  table{width:100%;border-collapse:collapse;font-size:14.5px;margin-top:28px}
-  th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line)}
-  th{color:var(--muted);font-weight:600;font-size:13px;letter-spacing:.04em;text-transform:uppercase}
-  td:last-child,th:last-child{text-align:right}
+  .split{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin-top:48px}
+  .panel{background:var(--s1);border:1px solid var(--line);border-radius:var(--r);padding:32px}
+  .panel h3{margin-bottom:11px} .panel p{color:var(--muted);font-size:14.5px;margin-bottom:18px}
+  .panel .btn{width:100%}
 
-  /* ---- policy ---- */
-  .policy h3{margin-top:26px}
+  .policy h3{margin:36px 0 10px;font-size:16px}
   .policy p,.policy li{color:var(--muted);font-size:14.5px}
-  .policy ul{margin:8px 0 0 20px;display:grid;gap:6px}
+  .policy ul{margin:10px 0 0 20px;display:grid;gap:7px}
+  .policy a,.small a{color:var(--blue)}
 
-  footer{border-top:1px solid var(--line);padding:36px 0 56px;color:var(--dim);font-size:14px}
-  .foot{display:flex;gap:28px;flex-wrap:wrap;justify-content:space-between}
-  .foot a{color:var(--muted)}
+  footer{border-top:1px solid var(--line);padding:42px 0 58px;color:var(--dim);font-size:13.5px}
+  .foot{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;align-items:center}
+  .foot a{color:var(--muted);transition:color .2s} .foot a:hover{color:var(--text)}
+  .legal{margin-top:20px;font-size:12.5px;color:#485265;line-height:1.7}
+
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto}
+    *{transition:none!important;animation:none!important}
+    .rev{opacity:1;transform:none}
+  }
 </style>
 </head>
 <body>
 
-<header>
+<header id="hdr">
   <div class="wrap nav">
-    <a class="brand" href="#top"><span class="mark"></span>Quest Viewer</a>
-    <nav>
+    <a class="brand" href="#top"><span class="mark">Q</span> Quest Viewer</a>
+    <div class="links">
+      <a href="#start">Get started</a>
       <a href="#features">Features</a>
-      <a href="#how">How it works</a>
+      <a href="#compare">Why not a capture card</a>
       <a href="#pricing">Pricing</a>
-      <a href="#sdk">Unity SDK</a>
-      <a href="#support">Support</a>
-    </nav>
+      <a href="./manual.html">Docs</a>
+      <a class="btn btn-primary btn-sm" href="https://apps.microsoft.com/detail/9NKR9T8MK6R8">Get it free</a>
+    </div>
   </div>
 </header>
 
 <main id="top">
 
-<!-- ══ HERO ══ -->
+<!-- ══════════ HERO ══════════ -->
 <section class="hero">
   <div class="wrap">
-    <span class="kicker">For Meta Quest 2 · 3 · 3S · Pro</span>
-    <h1>Your VR app, live on the <em>big screen.</em></h1>
-    <p>Quest Viewer receives live video from Meta Quest headsets running your Unity application
-       and displays it on a Windows PC — sub-100&nbsp;ms over your own network, peer-to-peer, with
-       no capture card and no cloud service. One headset or a whole room of them, side by side.</p>
-    <p>Built for demos, QA and instructor-led training. Works with VR applications built using the
-       free <a href="#sdk">Quest Streaming SDK</a> — it cannot capture other Quest apps or system
-       screens.</p>
-    <div class="cta">
-      <a class="btn btn-primary" href="#pricing">See pricing</a>
-      <a class="btn btn-ghost" href="#download">Download for Windows</a>
-    </div>
-    <p class="note">Free forever for one headset at 720p. No account required to try it.</p>
+    <span class="kicker rev">Meta Quest 2 · 3 · 3S · Pro</span>
+    <h1 class="rev">See inside your VR app, <em>live on a PC.</em></h1>
 
-    <div class="stats">
-      <div><b>&lt;100 ms</b><span>Glass-to-glass on LAN</span></div>
-      <div><b>10</b><span>Headsets at once</span></div>
-      <div><b>0</b><span>Capture cards needed</span></div>
-      <div><b>P2P</b><span>Video never touches a server</span></div>
+    <div class="rev">
+      <div class="aud" role="tablist" aria-label="Who are you?">
+        <button role="tab" aria-selected="true"  data-set="dev">I'm a developer</button>
+        <button role="tab" aria-selected="false" data-set="org">I run a venue or class</button>
+      </div>
     </div>
 
-    <div class="carousel" id="shots" aria-roledescription="carousel" aria-label="Quest Viewer screenshots">
+    <div class="rev">
+      <p class="lede show" data-aud="dev">Drop one free package into your Unity project and every
+        headset running your app streams to Windows — sub-100&nbsp;ms, peer to peer, no capture
+        card. <b style="color:var(--text);font-weight:600">There is no code to write:</b> a wizard
+        creates the config and wires the scene.</p>
+      <p class="lede" data-aud="org">Put every headset in the room on one screen. Watch what each
+        person sees, spot who is stuck, record a session for review — from a single Windows PC, over
+        the Wi-Fi you already have. No capture cards, no cabling, no cloud.</p>
+    </div>
+
+    <div class="cta rev">
+      <a class="btn btn-primary" href="https://apps.microsoft.com/detail/9NKR9T8MK6R8">Get it free on the Microsoft Store</a>
+      <a class="btn btn-ghost" href="#start">See the 3-step setup</a>
+    </div>
+    <p class="fine rev">Free forever for one headset at 720p. No account, no card, no time limit.</p>
+
+    <p class="constraint rev"><b>Works with your own VR app.</b> Quest Viewer displays applications
+      built with the free Quest Streaming SDK. It cannot capture other Quest apps, store-bought
+      games, or the Quest system menus.</p>
+
+    <div class="carousel rev" id="shots" aria-roledescription="carousel" aria-label="Quest Viewer screenshots">
       <div class="frame">
         <img class="on" src="grid-view-new.webp" width="1543" height="1019"
              data-cap="Three headsets streaming at once, with live codec, frame rate and bitrate per tile. Tiles stay in place when a headset drops, and reconnect on their own."
-             alt="Quest Viewer showing three Meta Quest headsets streaming live side by side, each tile with codec, frame rate and latency statistics">
+             alt="Quest Viewer showing three Meta Quest headsets streaming live side by side with per-tile statistics">
         <img src="expanded-view-new.webp" width="1491" height="1055" loading="lazy"
              data-cap="Fullscreen — one headset, full window, with live stats and Prev/Next to move between headsets without leaving the view."
-             alt="A single Meta Quest headset in fullscreen view at 72 fps, with scene name and live decoder statistics">
+             alt="A single Meta Quest headset in fullscreen at 72 fps with live decoder statistics">
         <img src="list-view.webp" width="1487" height="1058" loading="lazy"
-             data-cap="List view — a dense operator view for a room full of headsets: state, transport and frame rate per row, with start, stop and fullscreen on each."
-             alt="Quest Viewer list view showing connected headsets with status, transport and frame rate per row">
+             data-cap="List view — a dense operator view for a room full of headsets: state, transport and frame rate per row."
+             alt="Quest Viewer list view showing connected headsets with status and frame rate per row">
         <img src="grid-view-alt.webp" width="1584" height="993" loading="lazy"
-             data-cap="Tile grid — every headset on the network at a glance, each tile showing its own codec, frame rate and connection state."
+             data-cap="Tile grid — every headset on the network at a glance, each showing its own codec and connection state."
              alt="Quest Viewer tile grid with several Meta Quest headsets streaming simultaneously">
         <img src="pricing-page.webp" width="1920" height="1080" loading="lazy"
-             data-cap="Plans and pricing, in the app — pick a term and the prices update. The plan you are on is marked, so there is nothing to work out."
-             alt="Quest Viewer plans and pricing page showing Free, Pro and Organization tiers with a licence term selector">
+             data-cap="Plans and pricing, in the app — pick a term and the prices update. The plan you are on is marked."
+             alt="Quest Viewer plans and pricing page with Free, Pro and Organization tiers">
         <img src="manual-page.webp" width="1920" height="1080" loading="lazy"
-             data-cap="Manual and downloads — what the app does, how the free Unity SDK fits with it, and every link you need, without leaving the application."
-             alt="Quest Viewer manual and downloads page explaining the Windows app, the free Unity SDK and how they work together">
-
+             data-cap="Manual and downloads, in the app — what it does, how the SDK fits, and every link you need."
+             alt="Quest Viewer manual and downloads page">
         <button class="arrow prev" type="button" aria-label="Previous screenshot">&#8249;</button>
         <button class="arrow next" type="button" aria-label="Next screenshot">&#8250;</button>
       </div>
-      <div class="dots" role="tablist" aria-label="Choose a screenshot"></div>
+      <div class="dots" aria-label="Choose a screenshot"></div>
       <p class="slide-cap" aria-live="polite"></p>
     </div>
-  </div>
-</section>
 
-<!-- ══ FEATURES ══ -->
-<section id="features">
-  <div class="wrap">
-    <div class="eyebrow">01 — Features</div>
-    <h2>What it does</h2>
-    <p class="lede">One Unity package in your VR app, one application on the PC. Everything else is automatic.</p>
-    <div class="grid">
-      <div class="card"><h3><span class="dot"></span>Real-time video and audio</h3>
-        <p>Hardware H.264/HEVC encoding on the headset and Opus audio, carried by WebRTC. Typically well under 100&nbsp;ms on a local network.</p></div>
-      <div class="card"><h3><span class="dot"></span>Zero-configuration discovery</h3>
-        <p>Put the headset on the same Wi-Fi and it appears on the PC. No IP addresses, no pairing codes, no router changes.</p></div>
-      <div class="card"><h3><span class="dot"></span>Many headsets at once</h3>
-        <p>Watch a whole room in a tile grid or a compact list, then click any one to go fullscreen. Tested against a ten-headset target.</p></div>
-      <div class="card"><h3><span class="dot"></span>Spectator cameras</h3>
-        <p>Stream the player's own view, or any camera in your scene — a third-person chase cam, a fixed stage camera — and switch between them live.</p></div>
-      <div class="card"><h3><span class="dot"></span>Quality control from the PC</h3>
-        <p>Change resolution, frame rate and bitrate from the receiver while the stream is running. The headset applies it without dropping the session.</p></div>
-      <div class="card"><h3><span class="dot"></span>Sessions that heal themselves</h3>
-        <p>Headset sleeps, loses tracking or steps outside the guardian? The stream picks itself back up. No restarting the app on either end.</p></div>
-      <div class="card"><h3><span class="dot"></span>Kind to the headset</h3>
-        <p>Capture renders only while somebody is actually watching, so idle headsets stay cool and hold their charge.</p></div>
-      <div class="card"><h3><span class="dot"></span>Your footage stays yours</h3>
-        <p>Video travels directly from headset to PC. It never passes through our servers, because we do not run any.</p></div>
+    <div class="stats rev">
+      <div><b>&lt;100 ms</b><span>Glass to glass on LAN</span></div>
+      <div><b>0</b><span>Lines of code to write</span></div>
+      <div><b>0</b><span>Capture cards needed</span></div>
+      <div><b>P2P</b><span>Video never touches a server</span></div>
     </div>
   </div>
 </section>
 
-<!-- ══ HOW ══ -->
-<section id="how">
+<!-- ══════════ GET STARTED — the effort question, answered first ══════════ -->
+<section id="start" class="rule">
   <div class="wrap">
-    <div class="eyebrow">02 — How it works</div>
-    <h2>How it works</h2>
-    <p class="lede">Only discovery uses the network's broadcast or an optional relay. The video itself goes straight from the headset to your PC — that is what keeps latency low and footage private.</p>
-    <ol class="steps">
-      <li><h3>Add the SDK</h3><p>Import the free Quest Streaming SDK into your Unity project. A setup wizard checks your Android and OpenXR settings and fixes what is wrong.</p></li>
-      <li><h3>Build and run</h3><p>Deploy your app to the headset as usual. Streaming rides along inside it — there is no second app for users to launch.</p></li>
-      <li><h3>Open the receiver</h3><p>Run Quest Viewer on your Windows PC. Every headset on the network running your app shows up as a tile.</p></li>
-      <li><h3>Click and watch</h3><p>Pick a tile for fullscreen, switch cameras, change quality, or record the session to a file.</p></li>
-    </ol>
-  </div>
-</section>
+    <div class="eyebrow rev">Get started</div>
+    <h2 class="rev">Two minutes, and no code.</h2>
+    <p class="lede rev" style="margin-top:16px">The wizard installs the WebRTC dependency, creates a
+      config asset and drops a configured object into your scene. That is the whole integration.</p>
 
-<!-- ══ PRICING ══ -->
-<section id="pricing">
-  <div class="wrap">
-    <div class="eyebrow">03 — Pricing</div>
-    <h2>Pricing</h2>
-    <p class="lede">The Unity SDK is free with full source, always. The Windows receiver is free for one
-       headset at 720p — enough to develop, test and ship. Paid licences lift the limits for studios
-       and venues. Prices in US dollars; local taxes are calculated at checkout.</p>
+    <div class="proof">
+      <div class="term rev">
+        <div class="bar"><i></i><i></i><i></i><span>Unity Editor</span></div>
+<pre><span class="c">// 1 — install and set up, from the menu bar</span>
+<span class="k">Window ▸ Quest Streaming ▸</span> <span class="g">Setup Wizard</span>
+<span class="k">Window ▸ Quest Streaming ▸</span> <span class="g">Quest XR Setup</span>
 
-    <div class="seg" role="tablist" aria-label="Licence term">
-      <button role="tab" aria-selected="true"  data-term="1y">1 year</button>
-      <button role="tab" aria-selected="false" data-term="2y">2 years <span class="save">save 17%</span></button>
-      <button role="tab" aria-selected="false" data-term="lt">Lifetime</button>
-    </div>
+<span class="c">// 2 — build your APK exactly as you always do</span>
+<span class="k">File ▸</span> <span class="g">Build And Run</span>
 
-    <div class="tiers">
-      <div class="plan">
-        <div class="pname">Free</div>
-        <div class="amt">
-          <span class="now">$0</span>
-          <span class="per">forever</span>
-        </div>
-        <div class="terms">No account, no time limit</div>
-        <a class="cta line" href="https://apps.microsoft.com/detail/9NKR9T8MK6R8">Get from Microsoft Store</a>
-        <div class="feat">Enough to develop and ship with</div>
-        <ul class="rows">
-          <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 10.5l4 4 8-9" stroke-linecap="round" stroke-linejoin="round"/></svg>One headset at a time</li>
-          <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 10.5l4 4 8-9" stroke-linecap="round" stroke-linejoin="round"/></svg>Up to 720p</li>
-          <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 10.5l4 4 8-9" stroke-linecap="round" stroke-linejoin="round"/></svg>Tile, list and fullscreen views</li>
-          <li class="off"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M6 6l8 8M14 6l-8 8" stroke-linecap="round"/></svg>Session recording</li>
-          <li class="off"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M6 6l8 8M14 6l-8 8" stroke-linecap="round"/></svg>Multiple headsets</li>
-        </ul>
-        <div class="foot">Community support</div>
+<span class="c">// 3 — that's it. No SDK calls, no prefabs to wire,</span>
+<span class="c">//     no licence check, no phone-home.</span></pre>
       </div>
 
-      <div class="plan hero">
+      <div class="steps3 rev">
+        <div><div class="n">01</div><h3>Import the SDK</h3>
+          <p>Free, full C# source, Unity 6000.0+. On import it offers to install
+            <code>com.unity.webrtc</code> for you.</p></div>
+        <div><div class="n">02</div><h3>Run the two wizards</h3>
+          <p>Setup Wizard builds the config and scene object. Quest XR Setup verifies your
+            Android and OpenXR settings and fixes them one click at a time.</p></div>
+        <div><div class="n">03</div><h3>Open the receiver</h3>
+          <p>Run Quest Viewer on the PC. Every headset on the Wi-Fi running your app appears as a
+            tile within seconds. Nothing to type, nothing to pair.</p></div>
+      </div>
+    </div>
+
+    <p class="small rev" style="margin-top:22px">Spectator views, recording and watching many
+      headsets at once are all driven from the receiver — no extra code in your project.</p>
+  </div>
+</section>
+
+<!-- ══════════ FEATURES ══════════ -->
+<section id="features" class="rule">
+  <div class="wrap">
+    <div class="eyebrow rev">What it does</div>
+    <h2 class="rev">One package in your app.<br>One window on your desk.</h2>
+
+    <div class="bento">
+      <div class="b3 rev">
+        <div class="ic"><svg viewBox="0 0 24 24"><path d="M3 7h13v10H3z"/><path d="M16 10l5-3v10l-5-3"/></svg></div>
+        <h3>Real-time video and audio</h3>
+        <p>Hardware H.264/HEVC on the headset, Opus audio, carried by WebRTC straight to your PC.
+          Typically well under 100&nbsp;ms on a local network — close enough to coach someone
+          through what they are doing while they do it.</p>
+      </div>
+      <div class="b3 rev">
+        <div class="ic"><svg viewBox="0 0 24 24"><path d="M5 12.5a9 9 0 0114 0"/><path d="M8 16a5 5 0 018 0"/><circle cx="12" cy="19" r="1"/></svg></div>
+        <h3>Zero-configuration discovery</h3>
+        <p>Put a headset on the same Wi-Fi and it appears. No IP addresses, no pairing codes, no
+          router changes, nothing to configure on the headset itself.</p>
+      </div>
+      <div class="b2 rev">
+        <div class="ic"><svg viewBox="0 0 24 24"><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/><circle cx="12" cy="12" r="4"/></svg></div>
+        <h3>Live quality control</h3>
+        <p>Change resolution, frame rate and bitrate per headset while it streams. No restart.</p>
+      </div>
+      <div class="b2 rev">
+        <div class="ic"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 11-3-6.7"/><path d="M21 4v5h-5"/></svg></div>
+        <h3>Sessions that heal</h3>
+        <p>Headset sleeps, loses tracking, steps outside the guardian? The stream picks itself back
+          up on its own.</p>
+      </div>
+      <div class="b2 rev">
+        <div class="ic"><svg viewBox="0 0 24 24"><path d="M12 3l8 4v5c0 4.5-3.2 7.9-8 9-4.8-1.1-8-4.5-8-9V7z"/><path d="M9 12l2 2 4-4"/></svg></div>
+        <h3>Your footage stays yours</h3>
+        <p>Video goes headset to PC directly. We run no servers, so we cannot see it. No analytics,
+          no telemetry.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ INTERACTIVE ROOM ══════════ -->
+<section class="rule">
+  <div class="wrap">
+    <div class="eyebrow rev">Built for rooms, not just desks</div>
+    <h2 class="rev">How many headsets are you running?</h2>
+    <p class="lede rev" style="margin-top:16px">Drag it. The free tier is genuinely useful for
+      development; the paid tiers exist for the moment a second person puts a headset on.</p>
+
+    <div class="demo rev">
+      <div class="head">
+        <div><span class="cnt" id="cnt">1</span>
+          <span style="color:var(--dim);font-size:14px;margin-left:6px" id="cntw">headset</span></div>
+        <div class="small" id="tierlbl">Free tier</div>
+      </div>
+      <div class="tiles" id="tiles"></div>
+      <input type="range" id="rng" min="1" max="10" value="1" step="1" aria-label="Number of headsets">
+      <p class="verdict" id="verdict"></p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ COMPARISON ══════════ -->
+<section id="compare" class="rule">
+  <div class="wrap">
+    <div class="eyebrow rev">Why not the alternatives</div>
+    <h2 class="rev">The honest comparison.</h2>
+    <p class="lede rev" style="margin-top:16px">Every other route to getting a headset on a screen
+      has a real cost. Here is where each one hurts.</p>
+
+    <table class="rev">
+      <thead><tr>
+        <th>&nbsp;</th><th class="us">Quest Viewer</th><th>Capture card</th>
+        <th>Meta casting</th><th>Screen share</th>
+      </tr></thead>
+      <tbody>
+        <tr><td>Latency</td><td class="us yes">Under 100 ms</td><td>~50 ms</td>
+            <td class="no">1–3 seconds</td><td class="no">Seconds</td></tr>
+        <tr><td>Headsets at once</td><td class="us yes">Up to 10</td><td class="no">One per card</td>
+            <td class="no">One</td><td class="no">One</td></tr>
+        <tr><td>Hardware cost</td><td class="us yes">None</td><td class="no">£100+ per headset</td>
+            <td class="yes">None</td><td class="yes">None</td></tr>
+        <tr><td>Cables</td><td class="us yes">None</td><td class="no">Link cable per headset</td>
+            <td class="yes">None</td><td class="yes">None</td></tr>
+        <tr><td>Video leaves your network</td><td class="us yes">Never</td><td class="yes">Never</td>
+            <td class="no">Via Meta</td><td class="no">Via the service</td></tr>
+        <tr><td>Works with your own app</td><td class="us yes">Yes, with the SDK</td><td class="yes">Yes</td>
+            <td class="yes">Yes</td><td class="yes">Yes</td></tr>
+        <tr><td>Works with other Quest apps</td><td class="no">No</td><td class="yes">Yes</td>
+            <td class="yes">Yes</td><td class="yes">Yes</td></tr>
+      </tbody>
+    </table>
+    <p class="small rev" style="margin-top:18px">That last row matters and we would rather say it
+      plainly: Quest Viewer is for the app <em>you</em> built. If you need to capture a game you did
+      not build, a capture card is the right tool.</p>
+  </div>
+</section>
+
+<!-- ══════════ PRICING ══════════ -->
+<section id="pricing" class="rule">
+  <div class="wrap">
+    <div class="eyebrow rev">Pricing</div>
+    <h2 class="rev">Free to ship with.<br>Paid when you scale.</h2>
+    <p class="lede rev" style="margin-top:16px;margin-bottom:38px">The Unity SDK is free with full
+      source, always, and nothing in it checks a licence. The receiver is free for one headset at
+      720p — enough to develop, test and ship.</p>
+
+    <div class="rev" style="text-align:center">
+      <div class="seg" role="tablist" aria-label="Licence term">
+        <button role="tab" aria-selected="true"  data-term="1y">1 year</button>
+        <button role="tab" aria-selected="false" data-term="2y">2 years<span class="save">save 17%</span></button>
+        <button role="tab" aria-selected="false" data-term="lt">Lifetime</button>
+      </div>
+    </div>
+
+    <div class="plans">
+      <div class="plan rev">
+        <div class="pname">Free</div>
+        <div class="amt"><span class="now">$0</span><span class="per">forever</span></div>
+        <p class="pnote">No account, no card, no time limit.</p>
+        <a class="pcta line" href="https://apps.microsoft.com/detail/9NKR9T8MK6R8">Get from Microsoft Store</a>
+        <div class="pfeat">Enough to develop and ship with</div>
+        <ul class="rows">
+          <li><svg viewBox="0 0 20 20"><path d="M4 10.5l4 4 8-9"/></svg>One headset at a time</li>
+          <li><svg viewBox="0 0 20 20"><path d="M4 10.5l4 4 8-9"/></svg>Up to 720p</li>
+          <li><svg viewBox="0 0 20 20"><path d="M4 10.5l4 4 8-9"/></svg>Tile, list and fullscreen views</li>
+          <li class="off"><svg viewBox="0 0 20 20"><path d="M6 6l8 8M14 6l-8 8"/></svg>Session recording</li>
+          <li class="off"><svg viewBox="0 0 20 20"><path d="M6 6l8 8M14 6l-8 8"/></svg>Multiple headsets at once</li>
+        </ul>
+        <div class="pfoot">Community support</div>
+      </div>
+
+      <div class="plan top rev">
         <div class="pname">Pro <span class="badge">Most popular</span></div>
         <div class="amt">
           <span class="was" data-was hidden></span>
           <span class="now" data-now>$150</span>
           <span class="per" data-per>/ year</span>
         </div>
-        <div class="terms" data-note>Renew whenever you like — nothing breaks if you don't</div>
-        <a class="cta fill" href="https://store.dodopayments.com/questviewer">Upgrade to Pro</a>
-        <div class="feat">For developers and studios</div>
+        <p class="pnote" data-note>Renew whenever you like — nothing breaks if you don't.</p>
+        <a class="pcta fill" href="https://store.dodopayments.com/questviewer">Upgrade to Pro</a>
+        <div class="pfeat">For developers and studios</div>
         <ul class="rows">
-          <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 10.5l4 4 8-9" stroke-linecap="round" stroke-linejoin="round"/></svg>Unlimited simultaneous headsets</li>
-          <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 10.5l4 4 8-9" stroke-linecap="round" stroke-linejoin="round"/></svg>Full resolution, no 720p cap</li>
-          <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 10.5l4 4 8-9" stroke-linecap="round" stroke-linejoin="round"/></svg>Session recording to MP4</li>
-          <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 10.5l4 4 8-9" stroke-linecap="round" stroke-linejoin="round"/></svg>3 computers, movable any time</li>
-          <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 10.5l4 4 8-9" stroke-linecap="round" stroke-linejoin="round"/></svg>Updates and email support</li>
+          <li><svg viewBox="0 0 20 20"><path d="M4 10.5l4 4 8-9"/></svg>Unlimited simultaneous headsets</li>
+          <li><svg viewBox="0 0 20 20"><path d="M4 10.5l4 4 8-9"/></svg>Full resolution, no 720p cap</li>
+          <li><svg viewBox="0 0 20 20"><path d="M4 10.5l4 4 8-9"/></svg>Session recording to MP4</li>
+          <li><svg viewBox="0 0 20 20"><path d="M4 10.5l4 4 8-9"/></svg>3 computers, movable any time</li>
+          <li><svg viewBox="0 0 20 20"><path d="M4 10.5l4 4 8-9"/></svg>Updates and email support</li>
         </ul>
-        <div class="foot">14-day refund, no forms</div>
+        <div class="pfoot">14-day refund, no forms</div>
       </div>
 
-      <div class="plan">
+      <div class="plan rev">
         <div class="pname">Organization</div>
-        <div class="amt">
-          <span class="was" data-owas hidden></span>
-          <span class="now" data-onow>$799</span>
-          <span class="per" data-oper>/ year</span>
-        </div>
-        <div class="terms">Priced per site</div>
-        <a class="cta line" href="https://store.dodopayments.com/questviewer">Choose Organization</a>
-        <div class="feat">For arcades, venues and classrooms</div>
+        <div class="amt"><span class="now" data-onow>$799</span><span class="per" data-oper>/ year</span></div>
+        <p class="pnote">Priced per site.</p>
+        <a class="pcta line" href="https://store.dodopayments.com/questviewer">Choose Organization</a>
+        <div class="pfeat">For arcades, venues and classrooms</div>
         <ul class="rows">
-          <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 10.5l4 4 8-9" stroke-linecap="round" stroke-linejoin="round"/></svg>Everything in Pro</li>
-          <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 10.5l4 4 8-9" stroke-linecap="round" stroke-linejoin="round"/></svg>10 computers per site</li>
-          <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 10.5l4 4 8-9" stroke-linecap="round" stroke-linejoin="round"/></svg>Priority support</li>
-          <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 10.5l4 4 8-9" stroke-linecap="round" stroke-linejoin="round"/></svg>Volume licensing on request</li>
-          <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 10.5l4 4 8-9" stroke-linecap="round" stroke-linejoin="round"/></svg>Capital purchase option</li>
+          <li><svg viewBox="0 0 20 20"><path d="M4 10.5l4 4 8-9"/></svg>Everything in Pro</li>
+          <li><svg viewBox="0 0 20 20"><path d="M4 10.5l4 4 8-9"/></svg>10 computers per site</li>
+          <li><svg viewBox="0 0 20 20"><path d="M4 10.5l4 4 8-9"/></svg>Priority support</li>
+          <li><svg viewBox="0 0 20 20"><path d="M4 10.5l4 4 8-9"/></svg>Volume licensing on request</li>
+          <li><svg viewBox="0 0 20 20"><path d="M4 10.5l4 4 8-9"/></svg>Capital purchase option</li>
         </ul>
-        <div class="foot">14-day refund, no forms</div>
+        <div class="pfoot">14-day refund, no forms</div>
       </div>
     </div>
 
-    <table>
+    <table class="rev">
       <thead><tr><th>Licence</th><th>Machines</th><th>Term</th><th>Price (USD)</th></tr></thead>
       <tbody>
         <tr><td>Pro — 1 year</td><td>3</td><td>12 months</td><td>$150</td></tr>
@@ -435,255 +551,289 @@
       </tbody>
     </table>
 
-    <p class="note">A licence key arrives by email immediately after purchase. Paste it into the app to
-      activate this PC; you can deactivate a PC at any time to free the slot for another. When a
-      subscription lapses the version you already installed keeps working — renewal only covers new releases.</p>
-
-    <p class="note">Prices exclude local sales tax, VAT or GST, which is added at checkout.
-      Purchases are covered by our <a href="./terms.html">Terms of Service</a>, a
-      <a href="#refunds">14-day refund policy</a> and our
-      <a href="./privacy.html">Privacy Policy</a>.</p>
+    <p class="small rev" style="margin-top:22px">A licence key arrives by email immediately after
+      purchase. Paste it into the app to activate that PC; release a PC at any time to free the slot.
+      Prices exclude local sales tax, VAT or GST, added at checkout. Covered by our
+      <a href="./terms.html">Terms of Service</a>, a <a href="#refunds">14-day refund policy</a> and
+      our <a href="./privacy.html">Privacy Policy</a>.</p>
   </div>
-
-  <script>
-  (function(){
-    var seg = document.querySelector('.seg');
-    if (!seg) return;
-
-    /* was = the equivalent cost if bought as consecutive 1-year terms, so the
-       strikethrough is a real comparison rather than a fake anchor price. */
-    var DATA = {
-      '1y': { pro:['$150','/ year',   null, "Renew whenever you like — nothing breaks if you don't"],
-              org:['$799','/ year',   null] },
-      '2y': { pro:['$250','for 2 years','$300', 'Two years for the price of one and a half'],
-              org:['$1,099','once',   null] },
-      'lt': { pro:['$499','once',     null, 'Pay once. The licence never expires.'],
-              org:['$1,099','once',   null] }
-    };
-
-    function set(sel, text, hide){
-      var el = document.querySelector(sel);
-      if (!el) return;
-      if (hide) { el.hidden = true; return; }
-      el.hidden = false;
-      el.textContent = text;
-    }
-
-    function paint(term){
-      var d = DATA[term];
-
-      set('[data-now]', d.pro[0]);
-      set('[data-per]', d.pro[1]);
-      set('[data-was]', d.pro[2], !d.pro[2]);
-      set('[data-note]', d.pro[3]);
-
-      set('[data-onow]', d.org[0]);
-      set('[data-oper]', d.org[1]);
-      set('[data-owas]', d.org[2], !d.org[2]);
-
-      Array.prototype.forEach.call(seg.querySelectorAll('button'), function(b){
-        b.setAttribute('aria-selected', String(b.dataset.term === term));
-      });
-    }
-
-    seg.addEventListener('click', function(e){
-      var b = e.target.closest('button[data-term]');
-      if (b) paint(b.dataset.term);
-    });
-
-    /* Lifetime and 2-year Organization are the same $1,099 product, so the
-       "save 17%" label would be a lie on that card. It sits on the toggle,
-       which is Pro-specific messaging, and that is accurate. */
-    paint('1y');
-  })();
-  </script>
 </section>
 
-<!-- ══ SDK ══ -->
-<section id="sdk">
+<!-- ══════════ FAQ ══════════ -->
+<section class="rule">
   <div class="wrap">
-    <div class="eyebrow">04 — Unity SDK</div>
-    <h2>The Unity SDK is free</h2>
-    <p class="lede">Quest Streaming SDK is published on the Unity Asset Store with complete C# source.
-      No activation, no phone-home, no runtime fee — embed it in commercial projects freely.
-      Requires Unity 6000.0 or newer and <code>com.unity.webrtc</code> 3.0.0+, which the package offers
-      to install for you on import.</p>
-    <div class="cta">
-      <!-- /releases/latest/download/ always resolves to the newest release that
-           carries this asset, so this link never needs updating again. The
-           portable zip cannot use it because its filename carries the version. -->
-      <a class="btn btn-primary" href="https://github.com/GowthamVRXR/Questviewer/releases/latest/download/QuestStreamingSDK.unitypackage">Download the SDK — .unitypackage</a>
-      <a class="btn btn-ghost" href="#support">Questions about integration?</a>
+    <div class="eyebrow rev">Questions</div>
+    <h2 class="rev">The things people ask first.</h2>
+
+    <div class="faq rev">
+      <details><summary>Can I use it to record Beat Saber or other store games?</summary>
+        <p>No. Quest Viewer only shows applications built with the Quest Streaming SDK — software
+          you or your developer built and deployed. It cannot capture other Quest apps, store-bought
+          games, or the system menus. There is no covert mode and no way to add one. If you need to
+          capture a game you did not build, a capture card is the right tool.</p></details>
+      <details><summary>How much code do I have to write?</summary>
+        <p>None. You import the package, run two wizard items from the Unity menu bar, and build as
+          usual. There are no SDK calls to make, no prefabs to wire and no callbacks to implement.
+          Spectator views, recording and multi-headset viewing are all driven from the receiver.</p></details>
+      <details><summary>Does the SDK phone home or check a licence?</summary>
+        <p>No. The SDK is free, ships with complete C# source, contains no activation check and
+          makes no call to us. You can read every line before you ship it. The paid licence applies
+          only to the Windows receiver, and only above the free tier's limits.</p></details>
+      <details><summary>What happens when a paid licence expires?</summary>
+        <p>The app returns to the free tier — one headset, 720p. Nothing is deleted, nothing is
+          locked, and the version you installed keeps working forever. A term only covers releases
+          published during it.</p></details>
+      <details><summary>We have ten headsets on one Wi-Fi. Will that hold up?</summary>
+        <p>The architecture is built for it, and the receiver is tested against a ten-headset target.
+          The practical limit is your access point, not the software — ten simultaneous 1080p streams
+          is real bandwidth. Drop the per-headset quality from the PC and it stays smooth on modest
+          hardware. Every headset is an independent peer connection, so one dropping out does not
+          affect the rest.</p></details>
+      <details><summary>Can I move a licence to a different computer?</summary>
+        <p>Yes, as often as you like. The licence window lists every computer the key is active on
+          and lets you release any of them — including machines you no longer have access to, which
+          matters after a Windows reinstall.</p></details>
+      <details><summary>Does any video reach your servers?</summary>
+        <p>It cannot. Video travels directly between headset and PC over WebRTC. We operate no media
+          servers, so there is nothing for it to pass through. Only licence activation contacts our
+          payment provider, and that sends the key, your computer's name and a short hash — nothing
+          else.</p></details>
     </div>
-    <p class="note">Import the <code>.unitypackage</code> into Unity 6000.0 or newer — the setup
-      wizard installs <code>com.unity.webrtc</code> and configures your scene. Complete C# source,
-      no activation check, embeddable in commercial projects at no cost.</p>
-    <p class="note">The package is also awaiting publication on the Unity Asset Store. Until it
-      appears there, the download above is the same package, at the same version.</p>
   </div>
 </section>
 
-<!-- ══ DOWNLOAD ══ -->
-<section id="download">
+<!-- ══════════ DOWNLOAD ══════════ -->
+<section id="sdk" class="rule">
   <div class="wrap">
-    <div class="eyebrow">05 — Download</div>
-    <h2>Get Quest Viewer</h2>
-    <p class="lede">Windows 10 version 1809 or newer, 64-bit. The free tier needs no key and no
-      account — install, run, put a headset on. Get it from the Microsoft Store and it stays
-      up to date automatically.</p>
-    <div class="cta">
-      <a class="btn btn-primary" href="https://apps.microsoft.com/detail/9NKR9T8MK6R8">Get it from the Microsoft Store</a>
-      <a class="btn btn-ghost" href="https://github.com/GowthamVRXR/Questviewer/releases/download/v2.0.5/QuestViewer-v2.0.5-win-x64.zip">Download the portable build</a>
-      <a class="btn btn-ghost" href="#pricing">See licence options</a>
+    <div class="eyebrow rev">Both halves, free to try</div>
+    <h2 class="rev">Start in the next five minutes.</h2>
+
+    <div class="split">
+      <div class="panel rev">
+        <h3>Quest Streaming SDK — free</h3>
+        <p>Complete C# source, no activation, no runtime fee. Embed it in commercial projects
+          freely. Unity 6000.0+ and <code>com.unity.webrtc</code> 3.0.0+, which the package offers
+          to install on import.</p>
+        <a class="btn btn-primary" href="https://github.com/GowthamVRXR/Questviewer/releases/latest/download/QuestStreamingSDK.unitypackage">Download the SDK</a>
+      </div>
+      <div class="panel rev" id="download">
+        <h3>Quest Viewer — free tier</h3>
+        <p>Windows 10 1809 or newer, 64-bit. Install, run, put a headset on. The Store build is
+          signed by Microsoft, so no security warnings, and it updates itself.</p>
+        <a class="btn btn-primary" href="https://apps.microsoft.com/detail/9NKR9T8MK6R8">Get from the Microsoft Store</a>
+        <p class="small" style="margin-top:15px">Store blocked on your machines?
+          <a href="https://github.com/GowthamVRXR/Questviewer/releases/download/v2.0.5/QuestViewer-v2.0.5-win-x64.zip">Download the portable build</a>
+          — unzip anywhere, keep the folder together.</p>
+      </div>
     </div>
-    <p class="note">Free forever for one headset at 720p. Signed and distributed by Microsoft,
-      so there are no security warnings to click through, and updates arrive on their own.</p>
-    <p class="note"><strong>Microsoft Store</strong> is the easy route — signed by Microsoft, no
-      security warnings, and it updates itself.</p>
-    <p class="note"><strong>Portable build</strong> for managed machines where the Store is blocked
-      — arcades, training floors, locked-down classrooms. Unzip anywhere and run
-      <code>QuestViewer.exe</code>, keeping the folder contents together. Windows will warn that it
-      is unsigned; choose <strong>More info → Run anyway</strong>. A SHA-256 checksum is published
-      on the <a href="https://github.com/GowthamVRXR/Questviewer/releases">releases page</a>.</p>
   </div>
 </section>
 
-<!-- ══ POLICIES ══ -->
-<section id="support" class="policy">
+<!-- ══════════ SUPPORT & POLICY ══════════ -->
+<section id="support" class="rule policy">
   <div class="wrap">
-    <div class="eyebrow">06 — Support</div>
-    <h2>Support, refunds and terms</h2>
+    <div class="eyebrow rev">Support</div>
+    <h2 class="rev">Refunds, terms and getting help.</h2>
+    <div class="rev">
+      <h3 id="manual">User manual</h3>
+      <p>The <a href="./manual.html">full user manual</a> covers installation, streaming and stream
+        quality, recording, licence activation, moving a licence between computers, and a
+        troubleshooting list that answers most questions faster than we can.</p>
 
-    <h3 id="manual">User manual</h3>
-    <p>The <a href="./manual.html">full user manual</a> covers installation, streaming and stream
-       quality, recording, licence activation and moving a licence between computers, and a
-       troubleshooting list that answers most questions faster than we can.</p>
+      <h3 id="contact">Contact</h3>
+      <p>Email <a href="mailto:gowthambaskaran.xr@gmail.com">gowthambaskaran.xr@gmail.com</a>. We
+        answer within two business days, usually sooner. Quest Viewer is built and sold by Gowtham
+        Baskaran, a sole proprietorship in Salem, Tamil Nadu, India.</p>
 
-    <h3 id="contact">Contact</h3>
-    <p>Email <a href="mailto:gowthambaskaran.xr@gmail.com">gowthambaskaran.xr@gmail.com</a>.
-       We answer within two business days, usually much sooner. Quest Viewer is built and sold by
-       Gowtham, a sole proprietorship registered in Salem, Tamil Nadu, India.</p>
+      <h3 id="refunds">Refund policy</h3>
+      <p>If Quest Viewer does not work for you, write within <b style="color:var(--text)">14 days</b>
+        of purchase and we will refund in full — no questionnaire, no restocking fee.</p>
+      <ul>
+        <li>Refunds return to the original payment method, typically within 5–10 business days.</li>
+        <li>The licence key is deactivated when the refund is issued.</li>
+        <li>The free tier lets you evaluate on your own hardware first — please do.</li>
+      </ul>
 
-    <h3 id="refunds">Refund policy</h3>
-    <p>If Quest Viewer does not work for you, write to us within <strong>14 days</strong> of purchase and
-       we will refund you in full — no questionnaire, no restocking fee. We would rather fix the problem,
-       so tell us what went wrong and give us a chance first, but the refund is yours either way.</p>
-    <ul>
-      <li>Refunds return to the original payment method, typically within 5–10 business days.</li>
-      <li>The licence key is deactivated when the refund is issued.</li>
-      <li>Because the free tier lets you evaluate the software on your own hardware before paying,
-          we ask that you try it first.</li>
-    </ul>
-
-    <h3 id="terms">Licence terms</h3>
-    <p>Summary below. The full <a href="./terms.html">Terms of Service</a> is the agreement that
-       applies to your purchase.</p>
-    <ul>
-      <li>A Pro licence may be activated on up to 3 computers; an Organization licence on up to 10. You may
-          deactivate a computer at any time and move the activation elsewhere.</li>
-      <li>The licence is for your use or your organisation's. Reselling, sublicensing or redistributing
+      <h3 id="terms">Licence terms</h3>
+      <p>Summary below. The full <a href="./terms.html">Terms of Service</a> is the agreement that
+        applies to your purchase.</p>
+      <ul>
+        <li>Pro activates on up to 3 computers; Organization on up to 10. Release and move any of
+          them at any time.</li>
+        <li>The licence is for you or your organisation. Reselling, sublicensing or redistributing
           the software or your key is not permitted.</li>
-      <li>Subscription licences include updates and support for their term. When a term ends, the version
-          you installed continues to work; only newer releases require a current licence.</li>
-      <li>The Unity SDK is licensed separately under the Unity Asset Store EULA and may be embedded in
-          your own applications at no cost.</li>
-      <li>The software is provided as is, without warranty. Our liability is limited to the amount you paid.</li>
-    </ul>
+        <li>Term licences include updates and support for their term; the version you installed
+          keeps working after it ends.</li>
+        <li>The Unity SDK may be embedded in your own applications at no cost.</li>
+        <li>Provided as is, without warranty. Liability is limited to the amount you paid.</li>
+      </ul>
 
-    <h3 id="privacy">Privacy</h3>
-    <ul>
-      <li><strong>Your video never reaches us.</strong> Streams travel directly between the headset and
-          your PC. We operate no media servers and cannot see, store or record what you stream.</li>
-      <li>When you activate a licence, the app sends the key and an anonymous machine identifier to our
-          payment provider so it can count activations. Nothing else leaves your computer.</li>
-      <li>Purchases are processed by Dodo Payments, which acts as merchant of record and handles your
-          payment details and tax. We never see your card number.</li>
-      <li>We keep your email address and purchase record so we can support you and honour refunds.
-          Ask us and we will delete it.</li>
-      <li>No analytics, no tracking, no advertising, ever.</li>
-    </ul>
+      <h3 id="privacy">Privacy</h3>
+      <ul>
+        <li><b style="color:var(--text)">Your video never reaches us.</b> Streams travel directly
+          between headset and PC. We operate no media servers and cannot see, store or record what
+          you stream.</li>
+        <li>Activating a licence sends the key, your computer's name and a short one-way hash to our
+          payment provider so it can enforce the machine limit. Nothing else leaves your computer.</li>
+        <li>Purchases are processed by Dodo Payments, merchant of record, which handles payment
+          details and tax. We never see your card number.</li>
+        <li>We keep your email and purchase record to support you and honour refunds. Ask and we
+          will delete it.</li>
+        <li>No analytics, no tracking, no advertising, ever. <a href="./privacy.html">Full policy</a>.</li>
+      </ul>
+    </div>
   </div>
 </section>
 
 </main>
 
 <footer>
-  <div class="wrap foot">
-    <div>© 2026 Gowtham · Quest Viewer · Salem, Tamil Nadu, India</div>
-    <div>
-      <a href="./manual.html">Manual</a> ·
-      <a href="#refunds">Refunds</a> ·
-      <a href="./terms.html">Terms of Service</a> ·
-      <a href="./privacy.html">Privacy</a> ·
-      <a href="mailto:gowthambaskaran.xr@gmail.com">Contact</a>
+  <div class="wrap">
+    <div class="foot">
+      <div>© 2026 Gowtham Baskaran · Salem, Tamil Nadu, India</div>
+      <div style="display:flex;gap:18px;flex-wrap:wrap">
+        <a href="./manual.html">Manual</a>
+        <a href="#refunds">Refunds</a>
+        <a href="./terms.html">Terms of Service</a>
+        <a href="./privacy.html">Privacy</a>
+        <a href="mailto:gowthambaskaran.xr@gmail.com">Contact</a>
+      </div>
     </div>
-  </div>
-  <div class="wrap" style="margin-top:18px;font-size:12.5px;color:#4C5568">
-    Meta, Meta Quest and Oculus are trademarks of Meta Platforms, Inc. Unity is a trademark of Unity
-    Technologies. This product is not affiliated with or endorsed by either company.
+    <p class="legal">Meta, Meta Quest and Oculus are trademarks of Meta Platforms, Inc. Unity is a
+      trademark of Unity Technologies. Microsoft and Windows are trademarks of Microsoft Corporation.
+      This product is not affiliated with, endorsed by, or sponsored by any of them.</p>
   </div>
 </footer>
 
-
 <script>
 (function(){
-  var root = document.getElementById('shots');
-  if (!root) return;
-
-  var imgs = Array.prototype.slice.call(root.querySelectorAll('.frame img'));
-  var dots = root.querySelector('.dots');
-  var cap  = root.querySelector('.slide-cap');
-  var i = 0, timer = null;
-  var DWELL = 5200;
-
-  /* Honour the OS "reduce motion" setting: no auto-advance, no drifting
-     screenshots for anyone who finds that uncomfortable. The carousel still
-     works, it just waits to be driven. */
   var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  imgs.forEach(function(_, n){
-    var b = document.createElement('button');
-    b.type = 'button';
-    b.setAttribute('aria-label', 'Screenshot ' + (n + 1) + ' of ' + imgs.length);
-    b.addEventListener('click', function(){ go(n); rest(); });
-    dots.appendChild(b);
-  });
+  var hdr = document.getElementById('hdr');
+  function sc(){ hdr.classList.toggle('stuck', window.scrollY > 8); }
+  addEventListener('scroll', sc, {passive:true}); sc();
 
-  function go(n){
-    i = (n + imgs.length) % imgs.length;
-    imgs.forEach(function(im, k){ im.classList.toggle('on', k === i); });
-    Array.prototype.forEach.call(dots.children, function(d, k){
-      d.setAttribute('aria-current', k === i ? 'true' : 'false');
-    });
-    cap.textContent = imgs[i].dataset.cap || '';
+  var revs = document.querySelectorAll('.rev');
+  if (still || !('IntersectionObserver' in window)) {
+    revs.forEach(function(e){ e.classList.add('in'); });
+  } else {
+    var io = new IntersectionObserver(function(en){
+      en.forEach(function(x){ if (x.isIntersecting){ x.target.classList.add('in'); io.unobserve(x.target); } });
+    }, {rootMargin:'0px 0px -8% 0px', threshold:.06});
+    revs.forEach(function(e,i){ e.style.transitionDelay = (i%4)*70 + 'ms'; io.observe(e); });
   }
 
-  function play(){ if (!still && !timer) timer = setInterval(function(){ go(i + 1); }, DWELL); }
-  function stop(){ clearInterval(timer); timer = null; }
-  function rest(){ stop(); play(); }   /* restart the clock after a manual move */
+  /* ── audience switch ── */
+  var aud = document.querySelector('.aud');
+  if (aud) {
+    aud.addEventListener('click', function(e){
+      var b = e.target.closest('button[data-set]'); if (!b) return;
+      var k = b.dataset.set;
+      [].forEach.call(aud.querySelectorAll('button'), function(x){
+        x.setAttribute('aria-selected', String(x.dataset.set === k));
+      });
+      document.querySelectorAll('[data-aud]').forEach(function(el){
+        el.classList.toggle('show', el.dataset.aud === k);
+      });
+    });
+  }
 
-  root.querySelector('.prev').addEventListener('click', function(){ go(i - 1); rest(); });
-  root.querySelector('.next').addEventListener('click', function(){ go(i + 1); rest(); });
+  /* ── carousel ── */
+  var root = document.getElementById('shots');
+  if (root) {
+    var imgs = [].slice.call(root.querySelectorAll('.frame img'));
+    var dots = root.querySelector('.dots'), cap = root.querySelector('.slide-cap');
+    var i = 0, timer = null;
+    imgs.forEach(function(_, n){
+      var b = document.createElement('button'); b.type='button';
+      b.setAttribute('aria-label','Screenshot '+(n+1)+' of '+imgs.length);
+      b.addEventListener('click', function(){ go(n); rest(); }); dots.appendChild(b);
+    });
+    function go(n){
+      i = (n + imgs.length) % imgs.length;
+      imgs.forEach(function(im,k){ im.classList.toggle('on', k===i); });
+      [].forEach.call(dots.children, function(d,k){ d.setAttribute('aria-current', k===i?'true':'false'); });
+      cap.textContent = imgs[i].dataset.cap || '';
+    }
+    function play(){ if (!still && !timer) timer = setInterval(function(){ go(i+1); }, 5200); }
+    function stop(){ clearInterval(timer); timer = null; }
+    function rest(){ stop(); play(); }
+    root.querySelector('.prev').addEventListener('click', function(){ go(i-1); rest(); });
+    root.querySelector('.next').addEventListener('click', function(){ go(i+1); rest(); });
+    root.addEventListener('mouseenter', stop); root.addEventListener('mouseleave', play);
+    root.addEventListener('focusin', stop);    root.addEventListener('focusout', play);
+    root.addEventListener('keydown', function(e){
+      if (e.key === 'ArrowLeft'){ go(i-1); rest(); } if (e.key === 'ArrowRight'){ go(i+1); rest(); }
+    });
+    document.addEventListener('visibilitychange', function(){ document.hidden ? stop() : play(); });
+    go(0); play();
+  }
 
-  /* Pause while the pointer or keyboard focus is inside — nothing is more
-     annoying than a slide changing under the cursor mid-read. */
-  root.addEventListener('mouseenter', stop);
-  root.addEventListener('mouseleave', play);
-  root.addEventListener('focusin',  stop);
-  root.addEventListener('focusout', play);
+  /* ── room demo ──
+     Shows the free-tier limit honestly rather than hiding it: tiles past the
+     first go amber and dashed, and the verdict says which plan covers you.
+     Someone who finds the wall here is not surprised by it after installing. */
+  var rng = document.getElementById('rng');
+  if (rng) {
+    var tiles = document.getElementById('tiles');
+    for (var t = 0; t < 10; t++) {
+      var d = document.createElement('div'); d.className = 'tile';
+      d.textContent = 'HEADSET ' + (t+1); tiles.appendChild(d);
+    }
+    function paintRoom(){
+      var n = +rng.value;
+      document.getElementById('cnt').textContent = n;
+      document.getElementById('cntw').textContent = n === 1 ? 'headset' : 'headsets';
+      [].forEach.call(tiles.children, function(el, k){
+        el.className = 'tile' + (k < n ? (k === 0 ? ' live' : ' locked') : '');
+      });
+      var lbl = document.getElementById('tierlbl'), v = document.getElementById('verdict');
+      /* Tile 1 stays lit — that is what Free gives you. The rest go amber and
+         dashed: the honest picture of what a paid plan unlocks, shown rather
+         than claimed. */
+      if (n === 1) {
+        lbl.textContent = 'Free tier covers this';
+        v.innerHTML = '<b>Free covers this.</b> One headset at up to 720p, forever, with no account and no time limit — enough to develop, test and ship.';
+      } else if (n <= 3) {
+        lbl.textContent = 'Free 1 · ' + (n - 1) + ' needs Pro';
+        v.innerHTML = '<b>' + (n - 1) + ' of these ' + (n - 1 === 1 ? 'needs' : 'need') + ' Pro.</b> Pro lifts the headset limit entirely and removes the 720p cap, on up to 3 computers. From $150 a year, or $499 once.';
+      } else {
+        lbl.textContent = 'Free 1 · ' + (n - 1) + ' needs Pro';
+        v.innerHTML = '<b>' + n + ' headsets still runs on Pro</b> — the headset count is unlimited on any paid plan. Organization is about how many <em>computers</em> run the receiver (10 rather than 3) plus priority support, which is usually what a venue actually needs.';
+      }
+    }
+    rng.addEventListener('input', paintRoom);
+    paintRoom();
+  }
 
-  root.addEventListener('keydown', function(e){
-    if (e.key === 'ArrowLeft')  { go(i - 1); rest(); }
-    if (e.key === 'ArrowRight') { go(i + 1); rest(); }
-  });
-
-  /* A background tab still fires intervals; stop burning them. */
-  document.addEventListener('visibilitychange', function(){
-    document.hidden ? stop() : play();
-  });
-
-  go(0);
-  play();
+  /* ── pricing term toggle ── */
+  var seg = document.querySelector('.seg');
+  if (seg) {
+    /* `was` is the same period bought as consecutive 1-year terms, so the
+       strikethrough is a real comparison and not an invented anchor. */
+    var D = {
+      '1y': { pro:['$150','/ year',    null,   "Renew whenever you like — nothing breaks if you don't."], org:['$799','/ year'] },
+      '2y': { pro:['$250','for 2 years','$300','Two years for the price of one and a half.'],             org:['$1,099','once'] },
+      'lt': { pro:['$499','once',      null,   'Pay once. The licence never expires.'],                   org:['$1,099','once'] }
+    };
+    function set(s, txt, hide){
+      var el = document.querySelector(s); if (!el) return;
+      if (hide){ el.hidden = true; return; } el.hidden = false; el.textContent = txt;
+    }
+    function paint(t){
+      var d = D[t];
+      set('[data-now]', d.pro[0]); set('[data-per]', d.pro[1]);
+      set('[data-was]', d.pro[2], !d.pro[2]); set('[data-note]', d.pro[3]);
+      set('[data-onow]', d.org[0]); set('[data-oper]', d.org[1]);
+      [].forEach.call(seg.querySelectorAll('button'), function(b){
+        b.setAttribute('aria-selected', String(b.dataset.term === t));
+      });
+    }
+    seg.addEventListener('click', function(e){
+      var b = e.target.closest('button[data-term]'); if (b) paint(b.dataset.term);
+    });
+    paint('1y');
+  }
 })();
 </script>
 </body>
