@@ -92,6 +92,47 @@
   .shot{margin-top:52px;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;
     background:var(--surface);box-shadow:0 40px 90px -50px rgba(0,0,0,.95),0 0 0 1px rgba(124,92,255,.08)}
   .shot svg,.shot img{display:block;width:100%;height:auto}
+
+  /* ---- hero carousel ----
+     The screenshots differ in aspect ratio (1.41 to 1.78), so the frame is a
+     fixed 16/10 box with object-fit:contain. Cropping would cut UI text off the
+     edges; letterboxing costs a little dead space and keeps every screenshot
+     readable. */
+  .carousel{margin-top:52px;position:relative}
+  .frame{position:relative;aspect-ratio:16/10;border:1px solid var(--line);
+    border-radius:var(--radius);overflow:hidden;background:var(--surface);
+    box-shadow:0 40px 90px -50px rgba(0,0,0,.95),0 0 0 1px rgba(124,92,255,.08)}
+  .frame img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;
+    opacity:0;transform:scale(1.015);transition:opacity .55s ease,transform .55s ease;
+    pointer-events:none}
+  .frame img.on{opacity:1;transform:scale(1);pointer-events:auto}
+
+  .arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:3;
+    width:42px;height:42px;border-radius:50%;border:1px solid var(--line);
+    background:rgba(10,12,16,.72);backdrop-filter:blur(8px);color:var(--text);
+    font-size:17px;line-height:1;cursor:pointer;display:grid;place-items:center;
+    opacity:0;transition:opacity .2s ease,border-color .2s ease,background .2s ease}
+  .carousel:hover .arrow,.arrow:focus-visible{opacity:1}
+  .arrow:hover{border-color:rgba(124,92,255,.55);background:rgba(18,21,28,.9)}
+  .arrow.prev{left:14px}
+  .arrow.next{right:14px}
+
+  .dots{display:flex;gap:9px;justify-content:center;margin-top:18px}
+  .dots button{width:8px;height:8px;padding:0;border-radius:50%;border:0;cursor:pointer;
+    background:var(--line);transition:background .25s ease,width .25s ease}
+  .dots button:hover{background:var(--dim)}
+  .dots button[aria-current="true"]{width:26px;border-radius:999px;background:var(--grad)}
+
+  .slide-cap{color:var(--dim);font-size:13.5px;margin-top:14px;text-align:center;
+    min-height:40px;max-width:70ch;margin-left:auto;margin-right:auto;
+    transition:opacity .3s ease}
+
+  /* Anyone who has asked the OS to stop animating gets no auto-advance and no
+     transitions — the carousel still works, it just changes instantly. */
+  @media (prefers-reduced-motion: reduce){
+    .frame img,.slide-cap{transition:none}
+    .frame img{transform:none}
+  }
   /* screenshot gallery */
   .gallery{display:grid;gap:20px;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));margin-top:8px}
   .gallery figure{margin:0}
@@ -235,11 +276,33 @@
       <div><b>P2P</b><span>Video never touches a server</span></div>
     </div>
 
-    <div class="shot">
-      <img src="grid-view-new.webp" width="1543" height="1019"
-           alt="Quest Viewer showing three Meta Quest headsets streaming live side by side, each tile with codec, frame rate and latency statistics">
+    <div class="carousel" id="shots" aria-roledescription="carousel" aria-label="Quest Viewer screenshots">
+      <div class="frame">
+        <img class="on" src="grid-view-new.webp" width="1543" height="1019"
+             data-cap="Three headsets streaming at once, with live codec, frame rate and bitrate per tile. Tiles stay in place when a headset drops, and reconnect on their own."
+             alt="Quest Viewer showing three Meta Quest headsets streaming live side by side, each tile with codec, frame rate and latency statistics">
+        <img src="expanded-view-new.webp" width="1491" height="1055" loading="lazy"
+             data-cap="Fullscreen — one headset, full window, with live stats and Prev/Next to move between headsets without leaving the view."
+             alt="A single Meta Quest headset in fullscreen view at 72 fps, with scene name and live decoder statistics">
+        <img src="list-view.webp" width="1487" height="1058" loading="lazy"
+             data-cap="List view — a dense operator view for a room full of headsets: state, transport and frame rate per row, with start, stop and fullscreen on each."
+             alt="Quest Viewer list view showing connected headsets with status, transport and frame rate per row">
+        <img src="grid-view-alt.webp" width="1584" height="993" loading="lazy"
+             data-cap="Tile grid — every headset on the network at a glance, each tile showing its own codec, frame rate and connection state."
+             alt="Quest Viewer tile grid with several Meta Quest headsets streaming simultaneously">
+        <img src="pricing-page.webp" width="1920" height="1080" loading="lazy"
+             data-cap="Plans and pricing, in the app — pick a term and the prices update. The plan you are on is marked, so there is nothing to work out."
+             alt="Quest Viewer plans and pricing page showing Free, Pro and Organization tiers with a licence term selector">
+        <img src="manual-page.webp" width="1920" height="1080" loading="lazy"
+             data-cap="Manual and downloads — what the app does, how the free Unity SDK fits with it, and every link you need, without leaving the application."
+             alt="Quest Viewer manual and downloads page explaining the Windows app, the free Unity SDK and how they work together">
+
+        <button class="arrow prev" type="button" aria-label="Previous screenshot">&#8249;</button>
+        <button class="arrow next" type="button" aria-label="Next screenshot">&#8250;</button>
+      </div>
+      <div class="dots" role="tablist" aria-label="Choose a screenshot"></div>
+      <p class="slide-cap" aria-live="polite"></p>
     </div>
-    <p class="caption">Three headsets streaming at once, with live codec, frame rate and bitrate per tile. Tiles stay in place when a headset drops, and reconnect on their own.</p>
   </div>
 </section>
 
@@ -266,39 +329,6 @@
         <p>Capture renders only while somebody is actually watching, so idle headsets stay cool and hold their charge.</p></div>
       <div class="card"><h3><span class="dot"></span>Your footage stays yours</h3>
         <p>Video travels directly from headset to PC. It never passes through our servers, because we do not run any.</p></div>
-    </div>
-
-    <div class="gallery" style="margin-top:32px">
-      <figure>
-        <img src="expanded-view-new.webp" width="1491" height="1055" loading="lazy"
-             alt="A single Meta Quest headset in fullscreen view at 72 fps, with scene name and live decoder statistics">
-        <figcaption>Fullscreen — one headset, full window, with live stats and Prev/Next to move
-          between headsets without leaving the view.</figcaption>
-      </figure>
-      <figure>
-        <img src="grid-view-alt.webp" width="1584" height="993" loading="lazy"
-             alt="Quest Viewer tile grid with several Meta Quest headsets streaming simultaneously">
-        <figcaption>Tile grid — every headset on the network at a glance, each tile showing its own
-          codec, frame rate and connection state.</figcaption>
-      </figure>
-      <figure>
-        <img src="list-view.webp" width="1487" height="1058" loading="lazy"
-             alt="Quest Viewer list view showing connected headsets with status, transport and frame rate per row">
-        <figcaption>List view — a dense operator view for a room full of headsets: state,
-          transport and frame rate per row, with start, stop and fullscreen on each.</figcaption>
-      </figure>
-      <figure>
-        <img src="pricing-page.webp" width="1920" height="1080" loading="lazy"
-             alt="Quest Viewer plans and pricing page showing Free, Pro and Organization tiers with a licence term selector">
-        <figcaption>Plans and pricing, in the app — pick a term and the prices update. The plan you
-          are on is marked, so there is nothing to work out.</figcaption>
-      </figure>
-      <figure>
-        <img src="manual-page.webp" width="1920" height="1080" loading="lazy"
-             alt="Quest Viewer manual and downloads page explaining the Windows app, the free Unity SDK and how they work together">
-        <figcaption>Manual and downloads — what the app does, how the free Unity SDK fits with it,
-          and every link you need, without leaving the application.</figcaption>
-      </figure>
     </div>
   </div>
 </section>
@@ -594,5 +624,67 @@
   </div>
 </footer>
 
+
+<script>
+(function(){
+  var root = document.getElementById('shots');
+  if (!root) return;
+
+  var imgs = Array.prototype.slice.call(root.querySelectorAll('.frame img'));
+  var dots = root.querySelector('.dots');
+  var cap  = root.querySelector('.slide-cap');
+  var i = 0, timer = null;
+  var DWELL = 5200;
+
+  /* Honour the OS "reduce motion" setting: no auto-advance, no drifting
+     screenshots for anyone who finds that uncomfortable. The carousel still
+     works, it just waits to be driven. */
+  var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  imgs.forEach(function(_, n){
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.setAttribute('aria-label', 'Screenshot ' + (n + 1) + ' of ' + imgs.length);
+    b.addEventListener('click', function(){ go(n); rest(); });
+    dots.appendChild(b);
+  });
+
+  function go(n){
+    i = (n + imgs.length) % imgs.length;
+    imgs.forEach(function(im, k){ im.classList.toggle('on', k === i); });
+    Array.prototype.forEach.call(dots.children, function(d, k){
+      d.setAttribute('aria-current', k === i ? 'true' : 'false');
+    });
+    cap.textContent = imgs[i].dataset.cap || '';
+  }
+
+  function play(){ if (!still && !timer) timer = setInterval(function(){ go(i + 1); }, DWELL); }
+  function stop(){ clearInterval(timer); timer = null; }
+  function rest(){ stop(); play(); }   /* restart the clock after a manual move */
+
+  root.querySelector('.prev').addEventListener('click', function(){ go(i - 1); rest(); });
+  root.querySelector('.next').addEventListener('click', function(){ go(i + 1); rest(); });
+
+  /* Pause while the pointer or keyboard focus is inside — nothing is more
+     annoying than a slide changing under the cursor mid-read. */
+  root.addEventListener('mouseenter', stop);
+  root.addEventListener('mouseleave', play);
+  root.addEventListener('focusin',  stop);
+  root.addEventListener('focusout', play);
+
+  root.addEventListener('keydown', function(e){
+    if (e.key === 'ArrowLeft')  { go(i - 1); rest(); }
+    if (e.key === 'ArrowRight') { go(i + 1); rest(); }
+  });
+
+  /* A background tab still fires intervals; stop burning them. */
+  document.addEventListener('visibilitychange', function(){
+    document.hidden ? stop() : play();
+  });
+
+  go(0);
+  play();
+})();
+</script>
 </body>
 </html>
