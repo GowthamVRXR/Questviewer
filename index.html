@@ -135,6 +135,50 @@
   .badge{display:inline-block;font-size:11px;letter-spacing:.07em;text-transform:uppercase;
     background:var(--grad);color:#fff;padding:3px 9px;border-radius:999px}
 
+  /* ---- term toggle + plan cards ---- */
+  /* Segmented pill. One control changes every price on the page, so the five
+     SKUs read as three plans instead of five competing cards. */
+  .seg{display:inline-flex;background:var(--surface);border:1px solid var(--line);
+    border-radius:999px;padding:4px;gap:2px;margin:0 auto 34px;position:relative;left:50%;transform:translateX(-50%)}
+  .seg button{appearance:none;border:0;background:transparent;color:var(--muted);cursor:pointer;
+    font:inherit;font-size:14px;font-weight:600;padding:9px 22px;border-radius:999px;
+    transition:background .18s ease,color .18s ease}
+  .seg button:hover{color:var(--text)}
+  .seg button[aria-selected="true"]{background:var(--grad);color:#fff}
+  .save{font-size:11px;font-weight:600;opacity:.85;margin-left:6px}
+
+  /* Featured card: a violet wash fading into the card, plus a brighter hairline.
+     Subtle on purpose — it should mark the recommendation, not shout. */
+  .plan{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:30px 26px;
+    display:flex;flex-direction:column;transition:border-color .18s ease,transform .18s ease}
+  .plan:hover{transform:translateY(-2px);border-color:rgba(124,92,255,.3)}
+  .plan.hero{border-color:rgba(79,140,255,.6);
+    background:linear-gradient(180deg,rgba(79,140,255,.30) 0%,rgba(79,140,255,.13) 26%,rgba(79,140,255,.04) 58%,var(--surface) 100%);
+    box-shadow:0 30px 70px -40px rgba(79,140,255,.7)}
+  .plan .pname{font-size:23px;font-weight:650;letter-spacing:-.02em;margin-bottom:20px;
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .plan .amt{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;min-height:46px}
+  .plan .was{font-size:24px;font-weight:600;color:var(--dim);text-decoration:line-through;
+    text-decoration-thickness:2px;letter-spacing:-.02em}
+  .plan .now{font-size:40px;font-weight:700;letter-spacing:-.035em;line-height:1}
+  .plan .per{font-size:13.5px;color:var(--dim)}
+  .plan .terms{font-size:13px;color:var(--dim);margin:8px 0 22px;min-height:20px}
+  .plan .cta{display:block;text-align:center;font-weight:600;font-size:15px;padding:13px 20px;
+    border-radius:999px;margin-bottom:24px;border:1px solid transparent}
+  .plan .cta.fill{background:var(--grad);color:#fff;box-shadow:0 10px 26px -12px rgba(124,92,255,.9)}
+  .plan .cta.fill:hover{text-decoration:none;filter:brightness(1.07)}
+  .plan .cta.line{border-color:var(--line);color:var(--text);background:var(--surface-2)}
+  .plan .cta.line:hover{text-decoration:none;border-color:rgba(124,92,255,.45)}
+  /* Current-plan state: deliberately inert. Nothing to buy, nothing to click. */
+  .plan .cta.current{border-color:var(--line);color:var(--dim);cursor:default;background:transparent}
+  .plan .feat{font-size:14px;font-weight:600;margin-bottom:14px}
+  .plan ul.rows{list-style:none;display:grid;gap:13px;font-size:14.5px;color:var(--muted);margin:0}
+  .plan ul.rows li{display:flex;gap:11px;align-items:flex-start;line-height:1.5}
+  .plan ul.rows svg{flex:none;width:17px;height:17px;margin-top:2px;color:var(--violet-lite)}
+  .plan ul.rows li.off{color:var(--dim)}
+  .plan ul.rows li.off svg{color:var(--dim)}
+  .plan .foot{margin-top:auto;padding-top:22px;font-size:12.5px;color:var(--dim)}
+
   table{width:100%;border-collapse:collapse;font-size:14.5px;margin-top:28px}
   th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line)}
   th{color:var(--muted);font-weight:600;font-size:13px;letter-spacing:.04em;text-transform:uppercase}
@@ -192,7 +236,7 @@
     </div>
 
     <div class="shot">
-      <img src="grid-view.webp" width="1488" height="470"
+      <img src="grid-view-new.webp" width="1543" height="1019"
            alt="Quest Viewer showing three Meta Quest headsets streaming live side by side, each tile with codec, frame rate and latency statistics">
     </div>
     <p class="caption">Three headsets streaming at once, with live codec, frame rate and bitrate per tile. Tiles stay in place when a headset drops, and reconnect on their own.</p>
@@ -226,16 +270,34 @@
 
     <div class="gallery" style="margin-top:32px">
       <figure>
-        <img src="expanded-view.webp" width="1489" height="1056" loading="lazy"
+        <img src="expanded-view-new.webp" width="1491" height="1055" loading="lazy"
              alt="A single Meta Quest headset in fullscreen view at 72 fps, with scene name and live decoder statistics">
         <figcaption>Fullscreen — one headset, full window, with live stats and Prev/Next to move
           between headsets without leaving the view.</figcaption>
+      </figure>
+      <figure>
+        <img src="grid-view-alt.webp" width="1584" height="993" loading="lazy"
+             alt="Quest Viewer tile grid with several Meta Quest headsets streaming simultaneously">
+        <figcaption>Tile grid — every headset on the network at a glance, each tile showing its own
+          codec, frame rate and connection state.</figcaption>
       </figure>
       <figure>
         <img src="list-view.webp" width="1487" height="1058" loading="lazy"
              alt="Quest Viewer list view showing connected headsets with status, transport and frame rate per row">
         <figcaption>List view — a dense operator view for a room full of headsets: state,
           transport and frame rate per row, with start, stop and fullscreen on each.</figcaption>
+      </figure>
+      <figure>
+        <img src="pricing-page.webp" width="1920" height="1080" loading="lazy"
+             alt="Quest Viewer plans and pricing page showing Free, Pro and Organization tiers with a licence term selector">
+        <figcaption>Plans and pricing, in the app — pick a term and the prices update. The plan you
+          are on is marked, so there is nothing to work out.</figcaption>
+      </figure>
+      <figure>
+        <img src="manual-page.webp" width="1920" height="1080" loading="lazy"
+             alt="Quest Viewer manual and downloads page explaining the Windows app, the free Unity SDK and how they work together">
+        <figcaption>Manual and downloads — what the app does, how the free Unity SDK fits with it,
+          and every link you need, without leaving the application.</figcaption>
       </figure>
     </div>
   </div>
@@ -265,45 +327,70 @@
        headset at 720p — enough to develop, test and ship. Paid licences lift the limits for studios
        and venues. Prices in US dollars; local taxes are calculated at checkout.</p>
 
+    <div class="seg" role="tablist" aria-label="Licence term">
+      <button role="tab" aria-selected="true"  data-term="1y">1 year</button>
+      <button role="tab" aria-selected="false" data-term="2y">2 years <span class="save">save 17%</span></button>
+      <button role="tab" aria-selected="false" data-term="lt">Lifetime</button>
+    </div>
+
     <div class="tiers">
-      <div class="tier">
-        <div class="name">Free</div>
-        <div class="price">$0</div>
-        <div class="sub">Forever, no account</div>
-        <ul>
-          <li>One headset at a time</li>
-          <li>Up to 720p</li>
-          <li>Fullscreen, tile and list views</li>
-          <li>Community support</li>
+      <div class="plan">
+        <div class="pname">Free</div>
+        <div class="amt">
+          <span class="now">$0</span>
+          <span class="per">forever</span>
+        </div>
+        <div class="terms">No account, no time limit</div>
+        <a class="cta line" href="https://apps.microsoft.com/detail/9NKR9T8MK6R8">Get from Microsoft Store</a>
+        <div class="feat">Enough to develop and ship with</div>
+        <ul class="rows">
+          <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 10.5l4 4 8-9" stroke-linecap="round" stroke-linejoin="round"/></svg>One headset at a time</li>
+          <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 10.5l4 4 8-9" stroke-linecap="round" stroke-linejoin="round"/></svg>Up to 720p</li>
+          <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 10.5l4 4 8-9" stroke-linecap="round" stroke-linejoin="round"/></svg>Tile, list and fullscreen views</li>
+          <li class="off"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M6 6l8 8M14 6l-8 8" stroke-linecap="round"/></svg>Session recording</li>
+          <li class="off"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M6 6l8 8M14 6l-8 8" stroke-linecap="round"/></svg>Multiple headsets</li>
         </ul>
-        <a class="btn btn-ghost" href="https://apps.microsoft.com/detail/9NKR9T8MK6R8">Get from Microsoft Store</a>
+        <div class="foot">Community support</div>
       </div>
 
-      <div class="tier featured">
-        <div class="name">Pro <span class="badge">Popular</span></div>
-        <div class="price">$150<small> /year</small></div>
-        <div class="sub">$250 for two years · $499 lifetime</div>
-        <ul>
-          <li>Unlimited simultaneous headsets</li>
-          <li>Full resolution, up to 4K-ready</li>
-          <li>Session recording</li>
-          <li>3 machine activations</li>
-          <li>Updates and email support</li>
+      <div class="plan hero">
+        <div class="pname">Pro <span class="badge">Most popular</span></div>
+        <div class="amt">
+          <span class="was" data-was hidden></span>
+          <span class="now" data-now>$150</span>
+          <span class="per" data-per>/ year</span>
+        </div>
+        <div class="terms" data-note>Renew whenever you like — nothing breaks if you don't</div>
+        <a class="cta fill" href="https://store.dodopayments.com/questviewer">Upgrade to Pro</a>
+        <div class="feat">For developers and studios</div>
+        <ul class="rows">
+          <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 10.5l4 4 8-9" stroke-linecap="round" stroke-linejoin="round"/></svg>Unlimited simultaneous headsets</li>
+          <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 10.5l4 4 8-9" stroke-linecap="round" stroke-linejoin="round"/></svg>Full resolution, no 720p cap</li>
+          <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 10.5l4 4 8-9" stroke-linecap="round" stroke-linejoin="round"/></svg>Session recording to MP4</li>
+          <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 10.5l4 4 8-9" stroke-linecap="round" stroke-linejoin="round"/></svg>3 computers, movable any time</li>
+          <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 10.5l4 4 8-9" stroke-linecap="round" stroke-linejoin="round"/></svg>Updates and email support</li>
         </ul>
-        <a class="btn btn-primary" href="https://store.dodopayments.com/questviewer">Buy Pro</a>
+        <div class="foot">14-day refund, no forms</div>
       </div>
 
-      <div class="tier">
-        <div class="name">Organization</div>
-        <div class="price">$799<small> /year</small></div>
-        <div class="sub">$1,099 lifetime</div>
-        <ul>
-          <li>Everything in Pro</li>
-          <li>10 machine activations</li>
-          <li>Priority support</li>
-          <li>For arcades, LBE and training floors</li>
+      <div class="plan">
+        <div class="pname">Organization</div>
+        <div class="amt">
+          <span class="was" data-owas hidden></span>
+          <span class="now" data-onow>$799</span>
+          <span class="per" data-oper>/ year</span>
+        </div>
+        <div class="terms">Priced per site</div>
+        <a class="cta line" href="https://store.dodopayments.com/questviewer">Choose Organization</a>
+        <div class="feat">For arcades, venues and classrooms</div>
+        <ul class="rows">
+          <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 10.5l4 4 8-9" stroke-linecap="round" stroke-linejoin="round"/></svg>Everything in Pro</li>
+          <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 10.5l4 4 8-9" stroke-linecap="round" stroke-linejoin="round"/></svg>10 computers per site</li>
+          <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 10.5l4 4 8-9" stroke-linecap="round" stroke-linejoin="round"/></svg>Priority support</li>
+          <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 10.5l4 4 8-9" stroke-linecap="round" stroke-linejoin="round"/></svg>Volume licensing on request</li>
+          <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 10.5l4 4 8-9" stroke-linecap="round" stroke-linejoin="round"/></svg>Capital purchase option</li>
         </ul>
-        <a class="btn btn-ghost" href="https://store.dodopayments.com/questviewer">Buy Organization</a>
+        <div class="foot">14-day refund, no forms</div>
       </div>
     </div>
 
@@ -327,6 +414,59 @@
       <a href="#refunds">14-day refund policy</a> and our
       <a href="./privacy.html">Privacy Policy</a>.</p>
   </div>
+
+  <script>
+  (function(){
+    var seg = document.querySelector('.seg');
+    if (!seg) return;
+
+    /* was = the equivalent cost if bought as consecutive 1-year terms, so the
+       strikethrough is a real comparison rather than a fake anchor price. */
+    var DATA = {
+      '1y': { pro:['$150','/ year',   null, "Renew whenever you like — nothing breaks if you don't"],
+              org:['$799','/ year',   null] },
+      '2y': { pro:['$250','for 2 years','$300', 'Two years for the price of one and a half'],
+              org:['$1,099','once',   null] },
+      'lt': { pro:['$499','once',     null, 'Pay once. The licence never expires.'],
+              org:['$1,099','once',   null] }
+    };
+
+    function set(sel, text, hide){
+      var el = document.querySelector(sel);
+      if (!el) return;
+      if (hide) { el.hidden = true; return; }
+      el.hidden = false;
+      el.textContent = text;
+    }
+
+    function paint(term){
+      var d = DATA[term];
+
+      set('[data-now]', d.pro[0]);
+      set('[data-per]', d.pro[1]);
+      set('[data-was]', d.pro[2], !d.pro[2]);
+      set('[data-note]', d.pro[3]);
+
+      set('[data-onow]', d.org[0]);
+      set('[data-oper]', d.org[1]);
+      set('[data-owas]', d.org[2], !d.org[2]);
+
+      Array.prototype.forEach.call(seg.querySelectorAll('button'), function(b){
+        b.setAttribute('aria-selected', String(b.dataset.term === term));
+      });
+    }
+
+    seg.addEventListener('click', function(e){
+      var b = e.target.closest('button[data-term]');
+      if (b) paint(b.dataset.term);
+    });
+
+    /* Lifetime and 2-year Organization are the same $1,099 product, so the
+       "save 17%" label would be a lie on that card. It sits on the toggle,
+       which is Pro-specific messaging, and that is accurate. */
+    paint('1y');
+  })();
+  </script>
 </section>
 
 <!-- ══ SDK ══ -->
@@ -363,7 +503,7 @@
       up to date automatically.</p>
     <div class="cta">
       <a class="btn btn-primary" href="https://apps.microsoft.com/detail/9NKR9T8MK6R8">Get it from the Microsoft Store</a>
-      <a class="btn btn-ghost" href="https://github.com/GowthamVRXR/Questviewer/releases/download/v2.0.4/QuestViewer-v2.0.4-win-x64.zip">Download the portable build</a>
+      <a class="btn btn-ghost" href="https://github.com/GowthamVRXR/Questviewer/releases/download/v2.0.5/QuestViewer-v2.0.5-win-x64.zip">Download the portable build</a>
       <a class="btn btn-ghost" href="#pricing">See licence options</a>
     </div>
     <p class="note">Free forever for one headset at 720p. Signed and distributed by Microsoft,
