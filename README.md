@@ -1,11 +1,10 @@
-[README.md](https://github.com/user-attachments/files/31551580/README.md)
-# Quest Viewer
+# CastXR Viewer
 
 **Live VR streaming from Meta Quest to your Windows PC.** Under 100 ms on your own Wi-Fi,
 peer-to-peer, no capture card and no cloud service. Watch one headset or a whole room of them
 side by side.
 
-### ➜ [Get Quest Viewer free on the Microsoft Store](https://apps.microsoft.com/detail/9NKR9T8MK6R8)
+### ➜ [Get CastXR Viewer free on the Microsoft Store](https://apps.microsoft.com/detail/9NKR9T8MK6R8)
 
 Website: **https://gowthamvrxr.github.io/Questviewer/**
 
@@ -13,24 +12,24 @@ Website: **https://gowthamvrxr.github.io/Questviewer/**
 
 ## What this is
 
-Quest Viewer is two halves:
+CastXR Viewer is two halves:
 
 | | What it does | Where to get it |
 |---|---|---|
-| **Quest Streaming SDK** | Unity package that makes your VR app streamable | Unity Asset Store — free, full C# source |
-| **Quest Viewer** | Windows app that receives and displays the streams | [Microsoft Store](https://apps.microsoft.com/detail/9NKR9T8MK6R8) — free tier, no account |
+| **CastXR SDK** | Unity package that makes your VR app streamable | Unity Asset Store — free, full C# source |
+| **CastXR Viewer** | Windows app that receives and displays the streams | [Microsoft Store](https://apps.microsoft.com/detail/9NKR9T8MK6R8) — free tier, no account |
 
 Drop the SDK into your Unity project and every headset running your app shows up on the PC
 automatically — no IP addresses, no pairing codes, no router changes.
 
 ## Download
 
-### [Get Quest Viewer free on the Microsoft Store](https://apps.microsoft.com/detail/9NKR9T8MK6R8)
+### [Get CastXR Viewer free on the Microsoft Store](https://apps.microsoft.com/detail/9NKR9T8MK6R8)
 
 Signed and distributed by Microsoft, so there are no security warnings, and it keeps itself
 up to date.
 
-### [Download the portable build](https://github.com/GowthamVRXR/Questviewer/releases/download/v2.0.4/QuestViewer-v2.0.4-win-x64.zip)
+### [Download the portable build](https://github.com/GowthamVRXR/Questviewer/releases/download/v2.0.5/QuestViewer-v2.0.5-win-x64.zip)
 
 For managed machines where the Store is blocked or unavailable — arcades, training floors,
 locked-down classrooms. Unzip anywhere and run `QuestViewer.exe`, keeping the folder contents
@@ -40,11 +39,11 @@ checksum is published with each [release](https://github.com/GowthamVRXR/Questvi
 ## Requirements
 
 - Windows 10 version 1809 or newer, 64-bit
-- A Meta Quest 2, Quest 3 / 3S or Quest Pro running an app built with the Quest Streaming SDK
+- A Meta Quest 2, Quest 3 / 3S or Quest Pro running an app built with the CastXR SDK
 - Both devices on the same Wi-Fi network
 - Microsoft Edge WebView2 Runtime — already present on Windows 11 and most Windows 10 machines
 
-Quest Viewer *receives* streams. It does not mirror arbitrary Quest games — the headset must be
+CastXR Viewer *receives* streams. It does not mirror arbitrary Quest games — the headset must be
 running software built with the SDK.
 
 ## Free, trial and Pro
@@ -92,7 +91,7 @@ Common issues:
 
 ---
 
-This repository hosts the Quest Viewer website. Quest Viewer is built and
+This repository hosts the CastXR Viewer website. CastXR Viewer is built and
 sold by Gowtham Baskaran, Salem, Tamil Nadu, India.
 
 Meta, Meta Quest and Oculus are trademarks of Meta Platforms, Inc. Unity is a trademark of

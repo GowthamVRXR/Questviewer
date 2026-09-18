@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>User Manual — Quest Viewer</title>
-<meta name="description" content="Complete user manual for Quest Viewer: installation, streaming from Meta Quest headsets, views, recording, licensing and troubleshooting.">
+<title>User Manual — CastXR Viewer</title>
+<meta name="description" content="Complete user manual for CastXR Viewer: installation, streaming from Meta Quest headsets, views, recording, licensing and troubleshooting.">
 <style>
   :root{
     --bg:#0A0C10; --surface:#12151C; --line:#232936;
@@ -59,18 +59,18 @@
 <body>
 <div class="wrap">
 
-  <a class="back" href="./">← Quest Viewer</a>
+  <a class="back" href="./">← CastXR Viewer</a>
 
-  <h1>Quest Viewer — User Manual</h1>
-  <p class="updated">For version 2.0.4 · Last updated 26 August 2026</p>
+  <h1>CastXR Viewer — User Manual</h1>
+  <p class="updated">For version 3.0.0 · Last updated 18 September 2026</p>
 
-  <p class="lede">Quest Viewer displays your Unity VR application, running on Meta Quest headsets,
+  <p class="lede">CastXR Viewer displays your Unity VR application, running on Meta Quest headsets,
      live on a Windows PC. One headset or a room full of them, side by side.</p>
 
   <div class="card note">
-    <p><strong>Quest Viewer receives streams — it does not capture arbitrary Quest games.</strong>
+    <p><strong>CastXR Viewer receives streams — it does not capture arbitrary Quest games.</strong>
        The headset must be running an app built with the free
-       <a href="./#sdk">Quest Streaming SDK</a>. If you are an instructor or venue operator and
+       <a href="./#sdk">CastXR SDK</a>. If you are an instructor or venue operator and
        your VR content was made by someone else, ask the developer to add the SDK. It takes them
        about ten minutes and costs nothing.</p>
   </div>
@@ -149,19 +149,19 @@
   <h2 id="first-run">3. First run and firewall</h2>
 
   <ol>
-    <li>Launch Quest Viewer. The title bar reads <em>“Listening for Quest devices on the
+    <li>Launch CastXR Viewer. The title bar reads <em>“Listening for Quest devices on the
         network…”</em></li>
     <li><strong>Windows Firewall will prompt on first launch.</strong> Allow access on
         <strong>Private networks</strong>. Discovery will not work if you deny it — this is the
         single most common cause of “no headsets appear”.</li>
     <li>Put on the headset and launch your VR app.</li>
-    <li>A tile appears in Quest Viewer within a few seconds, moves through
+    <li>A tile appears in CastXR Viewer within a few seconds, moves through
         <em>Discovered → Connecting → Live</em>, and starts showing video.</li>
   </ol>
 
   <div class="card warn">
     <p><strong>If you denied the firewall prompt by mistake</strong>, open <em>Windows Security →
-       Firewall &amp; network protection → Allow an app through firewall</em>, find Quest Viewer,
+       Firewall &amp; network protection → Allow an app through firewall</em>, find CastXR Viewer,
        and tick <strong>Private</strong>. Then restart the app.</p>
   </div>
 
@@ -328,7 +328,7 @@
         setting usually called <em>client isolation</em>, <em>AP isolation</em> or <em>wireless
         isolation</em> stop devices seeing each other. This is common on hotel, campus and
         corporate Wi-Fi. Use a normal network, or a dedicated router.</li>
-    <li><strong>Is the headset app actually built with the SDK?</strong> Quest Viewer cannot see
+    <li><strong>Is the headset app actually built with the SDK?</strong> CastXR Viewer cannot see
         apps that do not include it.</li>
     <li><strong>Is your PC's clock correct?</strong> This one is not obvious. Discovery messages
         are timestamped and rejected if the two clocks disagree by more than a few minutes, so a
@@ -377,13 +377,13 @@
 
   <p>To make the first reply useful, include:</p>
   <ul>
-    <li>Your Quest Viewer version (shown next to the app name in the title bar)</li>
+    <li>Your CastXR Viewer version (shown next to the app name in the title bar)</li>
     <li>Which Quest model, and whether the tile appears at all</li>
     <li>What you have already tried from the troubleshooting list above</li>
   </ul>
 
   <footer>
-    <a href="./">Quest Viewer</a> ·
+    <a href="./">CastXR Viewer</a> ·
     <a href="./#pricing">Pricing</a> ·
     <a href="./terms.html">Terms of Service</a> ·
     <a href="./privacy.html">Privacy</a> ·

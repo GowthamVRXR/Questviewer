@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Quest Viewer — See inside your Unity VR app, live on a PC</title>
-<meta name="description" content="Quest Viewer streams your Unity VR application from Meta Quest headsets to a Windows PC. Sub-100ms, peer-to-peer, no capture card, no code to write. Free Unity SDK with full source. Free for one headset.">
-<meta property="og:title" content="Quest Viewer — Your VR app, live on the big screen">
+<title>CastXR Viewer — Your VR app, live on the big screen</title>
+<meta name="description" content="CastXR Viewer streams your Unity VR application from Meta Quest headsets to a Windows PC. Sub-100ms, peer-to-peer, no capture card, no code to write. Free Unity SDK with full source. Free for one headset.">
+<meta property="og:title" content="CastXR Viewer — Your VR app, live on the big screen">
 <meta property="og:description" content="Sub-100ms WebRTC streaming from Meta Quest to Windows. No capture card, no code to write. Free for one headset.">
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#07080B">
@@ -45,7 +45,7 @@
   .nav{display:flex;align-items:center;gap:30px;height:66px}
   .brand{display:flex;align-items:center;gap:11px;font-weight:600;letter-spacing:-.02em}
   .mark{width:27px;height:27px;border-radius:9px;background:var(--grad);display:grid;place-items:center;
-    color:#fff;font-size:14px;font-weight:700;flex:none}
+    color:#fff;font-size:11.5px;font-weight:700;letter-spacing:.02em;flex:none}
   .nav .links{margin-left:auto;display:flex;gap:28px;align-items:center}
   .nav .links a{color:var(--muted);font-size:14.5px;transition:color .2s}
   .nav .links a:hover{color:var(--text)}
@@ -248,7 +248,7 @@
 
 <header id="hdr">
   <div class="wrap nav">
-    <a class="brand" href="#top"><span class="mark">Q</span> Quest Viewer</a>
+    <a class="brand" href="#top"><span class="mark">CX</span> CastXR Viewer</a>
     <div class="links">
       <a href="#start">Get started</a>
       <a href="#features">Features</a>
@@ -291,30 +291,30 @@
     </div>
     <p class="fine rev">Free forever for one headset at 720p. No account, no card, no time limit.</p>
 
-    <p class="constraint rev"><b>Works with your own VR app.</b> Quest Viewer displays applications
-      built with the free Quest Streaming SDK. It cannot capture other Quest apps, store-bought
+    <p class="constraint rev"><b>Works with your own VR app.</b> CastXR Viewer displays applications
+      built with the free CastXR SDK. It cannot capture other Quest apps, store-bought
       games, or the Quest system menus.</p>
 
-    <div class="carousel rev" id="shots" aria-roledescription="carousel" aria-label="Quest Viewer screenshots">
+    <div class="carousel rev" id="shots" aria-roledescription="carousel" aria-label="CastXR Viewer screenshots">
       <div class="frame">
         <img class="on" src="grid-view-new.webp" width="1543" height="1019"
              data-cap="Three headsets streaming at once, with live codec, frame rate and bitrate per tile. Tiles stay in place when a headset drops, and reconnect on their own."
-             alt="Quest Viewer showing three Meta Quest headsets streaming live side by side with per-tile statistics">
+             alt="CastXR Viewer showing three Meta Quest headsets streaming live side by side with per-tile statistics">
         <img src="expanded-view-new.webp" width="1491" height="1055" loading="lazy"
              data-cap="Fullscreen — one headset, full window, with live stats and Prev/Next to move between headsets without leaving the view."
              alt="A single Meta Quest headset in fullscreen at 72 fps with live decoder statistics">
         <img src="list-view.webp" width="1487" height="1058" loading="lazy"
              data-cap="List view — a dense operator view for a room full of headsets: state, transport and frame rate per row."
-             alt="Quest Viewer list view showing connected headsets with status and frame rate per row">
+             alt="CastXR Viewer list view showing connected headsets with status and frame rate per row">
         <img src="grid-view-alt.webp" width="1584" height="993" loading="lazy"
              data-cap="Tile grid — every headset on the network at a glance, each showing its own codec and connection state."
-             alt="Quest Viewer tile grid with several Meta Quest headsets streaming simultaneously">
+             alt="CastXR Viewer tile grid with several Meta Quest headsets streaming simultaneously">
         <img src="pricing-page.webp" width="1920" height="1080" loading="lazy"
              data-cap="Plans and pricing, in the app — pick a term and the prices update. The plan you are on is marked."
-             alt="Quest Viewer plans and pricing page with Free, Pro and Organization tiers">
+             alt="CastXR Viewer plans and pricing page with Free, Pro and Organization tiers">
         <img src="manual-page.webp" width="1920" height="1080" loading="lazy"
              data-cap="Manual and downloads, in the app — what it does, how the SDK fits, and every link you need."
-             alt="Quest Viewer manual and downloads page">
+             alt="CastXR Viewer manual and downloads page">
         <button class="arrow prev" type="button" aria-label="Previous screenshot">&#8249;</button>
         <button class="arrow next" type="button" aria-label="Next screenshot">&#8250;</button>
       </div>
@@ -343,8 +343,8 @@
       <div class="term rev">
         <div class="bar"><i></i><i></i><i></i><span>Unity Editor</span></div>
 <pre><span class="c">// 1 — install and set up, from the menu bar</span>
-<span class="k">Window ▸ Quest Streaming ▸</span> <span class="g">Setup Wizard</span>
-<span class="k">Window ▸ Quest Streaming ▸</span> <span class="g">Quest XR Setup</span>
+<span class="k">Window ▸ CastXR ▸</span> <span class="g">Setup Wizard</span>
+<span class="k">Window ▸ CastXR ▸</span> <span class="g">Check Build and XR Settings</span>
 
 <span class="c">// 2 — build your APK exactly as you always do</span>
 <span class="k">File ▸</span> <span class="g">Build And Run</span>
@@ -361,7 +361,7 @@
           <p>Setup Wizard builds the config and scene object. Quest XR Setup verifies your
             Android and OpenXR settings and fixes them one click at a time.</p></div>
         <div><div class="n">03</div><h3>Open the receiver</h3>
-          <p>Run Quest Viewer on the PC. Every headset on the Wi-Fi running your app appears as a
+          <p>Run CastXR Viewer on the PC. Every headset on the Wi-Fi running your app appears as a
             tile within seconds. Nothing to type, nothing to pair.</p></div>
       </div>
     </div>
@@ -443,7 +443,7 @@
 
     <table class="rev">
       <thead><tr>
-        <th>&nbsp;</th><th class="us">Quest Viewer</th><th>Capture card</th>
+        <th>&nbsp;</th><th class="us">CastXR Viewer</th><th>Capture card</th>
         <th>Meta casting</th><th>Screen share</th>
       </tr></thead>
       <tbody>
@@ -464,7 +464,7 @@
       </tbody>
     </table>
     <p class="small rev" style="margin-top:18px">That last row matters and we would rather say it
-      plainly: Quest Viewer is for the app <em>you</em> built. If you need to capture a game you did
+      plainly: CastXR Viewer is for the app <em>you</em> built. If you need to capture a game you did
       not build, a capture card is the right tool.</p>
   </div>
 </section>
@@ -567,7 +567,7 @@
 
     <div class="faq rev">
       <details><summary>Can I use it to record Beat Saber or other store games?</summary>
-        <p>No. Quest Viewer only shows applications built with the Quest Streaming SDK — software
+        <p>No. CastXR Viewer only shows applications built with the CastXR SDK — software
           you or your developer built and deployed. It cannot capture other Quest apps, store-bought
           games, or the system menus. There is no covert mode and no way to add one. If you need to
           capture a game you did not build, a capture card is the right tool.</p></details>
@@ -610,14 +610,14 @@
 
     <div class="split">
       <div class="panel rev">
-        <h3>Quest Streaming SDK — free</h3>
+        <h3>CastXR SDK — free</h3>
         <p>Complete C# source, no activation, no runtime fee. Embed it in commercial projects
           freely. Unity 6000.0+ and <code>com.unity.webrtc</code> 3.0.0+, which the package offers
           to install on import.</p>
         <a class="btn btn-primary" href="https://github.com/GowthamVRXR/Questviewer/releases/latest/download/QuestStreamingSDK.unitypackage">Download the SDK</a>
       </div>
       <div class="panel rev" id="download">
-        <h3>Quest Viewer — free tier</h3>
+        <h3>CastXR Viewer — free tier</h3>
         <p>Windows 10 1809 or newer, 64-bit. Install, run, put a headset on. The Store build is
           signed by Microsoft, so no security warnings, and it updates itself.</p>
         <a class="btn btn-primary" href="https://apps.microsoft.com/detail/9NKR9T8MK6R8">Get from the Microsoft Store</a>
@@ -642,11 +642,11 @@
 
       <h3 id="contact">Contact</h3>
       <p>Email <a href="mailto:gowthambaskaran.xr@gmail.com">gowthambaskaran.xr@gmail.com</a>. We
-        answer within two business days, usually sooner. Quest Viewer is built and sold by Gowtham
+        answer within two business days, usually sooner. CastXR Viewer is built and sold by Gowtham
         Baskaran, a sole proprietorship in Salem, Tamil Nadu, India.</p>
 
       <h3 id="refunds">Refund policy</h3>
-      <p>If Quest Viewer does not work for you, write within <b style="color:var(--text)">14 days</b>
+      <p>If CastXR Viewer does not work for you, write within <b style="color:var(--text)">14 days</b>
         of purchase and we will refund in full — no questionnaire, no restocking fee.</p>
       <ul>
         <li>Refunds return to the original payment method, typically within 5–10 business days.</li>
