@@ -62,7 +62,7 @@
   <a class="back" href="./">← CastXR Viewer</a>
 
   <h1>CastXR Viewer — User Manual</h1>
-  <p class="updated">For version 3.0.0 · Last updated 18 September 2026</p>
+  <p class="updated">For version 3.0.0 · Last updated 24 September 2026</p>
 
   <p class="lede">CastXR Viewer displays your Unity VR application, running on Meta Quest headsets,
      live on a Windows PC. One headset or a room full of them, side by side.</p>
@@ -200,19 +200,35 @@
     <li><strong>Fullscreen</strong> — <strong>double-click any tile</strong>. Press
         <kbd>Esc</kbd> to come back. A toolbar along the bottom carries stream quality and
         recording.</li>
+    <li><strong>Separate window</strong> — pull any headset out into its own window and drag it to
+        a second monitor. See <a href="#streaming">section 5</a>.</li>
   </ul>
+
+  <h3>The tile toolbar</h3>
+  <p>Each tile carries its controls along the bottom-right, because the video area itself does not
+     accept clicks — it is rendered by a component that takes mouse input before the app sees it.
+     Everything you need is on this strip:</p>
+  <table>
+    <tr><th>Button</th><th>What it does</th></tr>
+    <tr><td><strong>Quality</strong></td><td>Resolution, frame rate and bitrate for this headset.</td></tr>
+    <tr><td><strong>Fullscreen</strong></td><td>Expand this headset to fill the window.</td></tr>
+    <tr><td><strong>Detach</strong></td><td>Open this headset in its own window.</td></tr>
+    <tr><td><strong>Record</strong></td><td>Start or stop recording. Turns red while recording.</td></tr>
+    <tr><td><strong>Stop</strong></td><td>End this headset's stream.</td></tr>
+  </table>
 
   <h2 id="streaming">5. Streaming, quality and multiple headsets</h2>
 
   <h3>Starting and stopping</h3>
-  <p>Streams start automatically when a headset is discovered. To control one by hand,
-     <strong>right-click its tile</strong>:</p>
-  <ul>
-    <li><strong>Open Fullscreen</strong></li>
-    <li><strong>Start Stream</strong> / <strong>Stop Stream</strong></li>
-    <li><strong>Stream Quality</strong> — see below</li>
-    <li><strong>Start Recording</strong> / <strong>Stop Recording</strong></li>
-  </ul>
+  <p>Streams start automatically when a headset is discovered. To control one by hand, use the
+     <strong>toolbar along the bottom of its tile</strong> — quality, fullscreen, detach, record
+     and stop.</p>
+  <div class="card note">
+    <p>Right-clicking works over the tile's <em>footer</em>, but not over the video itself. The
+       video is drawn by a component that takes mouse input before the app sees it, so a
+       right-click there goes nowhere. Everything in that menu is on the toolbar as a visible
+       button, which is why the buttons are there.</p>
+  </div>
 
   <h3>Stream quality</h3>
   <p>Three presets, per headset. Higher settings need more Wi-Fi headroom, so if video stutters
@@ -241,20 +257,46 @@
      and listed, but its stream is held until the first one stops. The trial and paid tiers remove
      the limit — the practical ceiling becomes your Wi-Fi, not the licence.</p>
 
+  <p>Tiles <strong>fill the window</strong> and rearrange themselves as headsets join and leave, so
+     a room of them stays readable. Make the window bigger and every tile grows with it.</p>
+
+  <h3>Watching on more than one screen</h3>
+  <p>Click the <strong>detach</strong> button in a tile's toolbar to open that headset in its own
+     window, which you can move to a second monitor and resize freely. Useful when you want one
+     participant large on a projector while the rest stay on the grid.</p>
+  <p>While a headset is detached, its tile shows a placeholder saying where the video went. That is
+     not a fault: there is only ever <strong>one live view per headset</strong>, so the video moves
+     rather than being duplicated. Showing it twice would mean a second connection and a second
+     decode for every headset.</p>
+  <p>Close the separate window and the video returns to its tile.</p>
+
   <h2 id="recording">6. Recording a session</h2>
 
   <p>Recording is a paid feature, available during the trial.</p>
   <ol>
-    <li>Right-click a tile → <strong>Start Recording</strong>, or use the toolbar in
-        fullscreen.</li>
-    <li>Right-click → <strong>Stop Recording</strong> to finish and write the file.</li>
+    <li>Click the <strong>red record button</strong> in the tile's bottom-right toolbar. It turns
+        red and a <strong>REC</strong> badge appears next to the headset name.</li>
+    <li>Click it again to stop and finish writing the file.</li>
   </ol>
-  <p>Recordings are saved on your own computer and are never uploaded anywhere. Each headset
-     records independently, so you can capture one participant while others stream normally.</p>
 
-  <div class="card warn">
-    <p><strong>Stop the recording before closing the app.</strong> A file still being written when
-       the app exits may be incomplete.</p>
+  <h3>Where recordings go</h3>
+  <p>Files are written to <code>Videos\CastXR</code>, named after the headset and the moment you
+     started:</p>
+  <p><code>Quest 2_2026-09-20_00-59-18.mp4</code></p>
+  <p>They are saved on your own computer and are never uploaded anywhere. Each headset records
+     independently, so you can capture one participant while others stream normally. Up to three
+     headsets can record at once.</p>
+
+  <h3>What gets captured</h3>
+  <p>Only the headset's video, encoded by your graphics card. Windows you drag over the top do not
+     appear in the file, and the recording keeps running if the app is behind another window.</p>
+  <p>You can record a headset that is in its own separate window, or fullscreen, as well as from
+     the grid.</p>
+
+  <div class="card note">
+    <p>If a recording will not start, the app now tells you why rather than failing quietly. The
+       most common reason is that the headset's video is not currently on screen — scroll its tile
+       into view, or open it fullscreen, and try again.</p>
   </div>
 
   <h2 id="licensing">7. Free tier, trial and licences</h2>
