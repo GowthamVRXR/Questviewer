@@ -16,7 +16,7 @@ CastXR Viewer is two halves:
 
 | | What it does | Where to get it |
 |---|---|---|
-| **CastXR SDK** | Unity package that makes your VR app streamable | Unity Asset Store — free, full C# source |
+| **CastXR SDK** | Unity package that makes your VR app streamable | [Unity Asset Store](https://assetstore.unity.com/packages/tools/video/castxr-sdk-396388) — free, full C# source |
 | **CastXR Viewer** | Windows app that receives and displays the streams | [Microsoft Store](https://apps.microsoft.com/detail/9NKR9T8MK6R8) — free tier, no account |
 
 Drop the SDK into your Unity project and every headset running your app shows up on the PC
@@ -29,7 +29,7 @@ automatically — no IP addresses, no pairing codes, no router changes.
 Signed and distributed by Microsoft, so there are no security warnings, and it keeps itself
 up to date.
 
-### [Download the portable build](https://github.com/GowthamVRXR/Questviewer/releases/download/v2.0.5/QuestViewer-v2.0.5-win-x64.zip)
+### [Download the portable build](https://github.com/GowthamVRXR/Questviewer/releases/download/v3.0.0/CastXRViewer-v3.0.0-win-x64.zip)
 
 For managed machines where the Store is blocked or unavailable — arcades, training floors,
 locked-down classrooms. Unzip anywhere and run `QuestViewer.exe`, keeping the folder contents
