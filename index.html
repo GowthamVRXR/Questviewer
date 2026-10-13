@@ -543,11 +543,13 @@
     <table class="rev">
       <thead><tr><th>Licence</th><th>Machines</th><th>Term</th><th>Price (USD)</th></tr></thead>
       <tbody>
-        <tr><td>Pro — 1 year</td><td>3</td><td>12 months</td><td>$150</td></tr>
-        <tr><td>Pro — 2 years</td><td>3</td><td>24 months</td><td>$250</td></tr>
-        <tr><td>Pro — lifetime</td><td>3</td><td>Perpetual</td><td>$499</td></tr>
-        <tr><td>Organization — annual</td><td>10</td><td>12 months</td><td>$799</td></tr>
-        <tr><td>Organization — lifetime</td><td>10</td><td>Perpetual</td><td>$1,099</td></tr>
+        <!-- data-price-for is filled from the live price service on load; the
+             figures here are the no-JavaScript fallback. -->
+        <tr><td>Pro — 1 year</td><td>3</td><td>12 months</td><td data-price-for="pro-1y">$150</td></tr>
+        <tr><td>Pro — 2 years</td><td>3</td><td>24 months</td><td data-price-for="pro-2y">$250</td></tr>
+        <tr><td>Pro — lifetime</td><td>3</td><td>Perpetual</td><td data-price-for="pro-lt">$499</td></tr>
+        <tr><td>Organization — annual</td><td>10</td><td>12 months</td><td data-price-for="organization-1y">$799</td></tr>
+        <tr><td>Organization — lifetime</td><td>10</td><td>Perpetual</td><td data-price-for="organization-lt">$1,099</td></tr>
       </tbody>
     </table>
 
@@ -776,6 +778,12 @@
      Shows the free-tier limit honestly rather than hiding it: tiles past the
      first go amber and dashed, and the verdict says which plan covers you.
      Someone who finds the wall here is not surprised by it after installing. */
+  /* Shared with the pricing block below: the room-size slider quotes the Pro
+     prices, so it has to move when they do or the page contradicts itself a
+     few hundred pixels apart. Overwritten by the live price fetch. */
+  var PRO_FROM = 'From $150 a year, or $499 once.';
+  var repaintRoom = null;
+
   var rng = document.getElementById('rng');
   if (rng) {
     var tiles = document.getElementById('tiles');
@@ -799,7 +807,7 @@
         v.innerHTML = '<b>Free covers this.</b> One headset at up to 720p, forever, with no account and no time limit — enough to develop, test and ship.';
       } else if (n <= 3) {
         lbl.textContent = 'Free 1 · ' + (n - 1) + ' needs Pro';
-        v.innerHTML = '<b>' + (n - 1) + ' of these ' + (n - 1 === 1 ? 'needs' : 'need') + ' Pro.</b> Pro lifts the headset limit entirely and removes the 720p cap, on up to 3 computers. From $150 a year, or $499 once.';
+        v.innerHTML = '<b>' + (n - 1) + ' of these ' + (n - 1 === 1 ? 'needs' : 'need') + ' Pro.</b> Pro lifts the headset limit entirely and removes the 720p cap, on up to 3 computers. ' + PRO_FROM;
       } else {
         lbl.textContent = 'Free 1 · ' + (n - 1) + ' needs Pro';
         v.innerHTML = '<b>' + n + ' headsets still runs on Pro</b> — the headset count is unlimited on any paid plan. Organization is about how many <em>computers</em> run the receiver (10 rather than 3) plus priority support, which is usually what a venue actually needs.';
@@ -807,9 +815,21 @@
     }
     rng.addEventListener('input', paintRoom);
     paintRoom();
+    repaintRoom = paintRoom;
   }
 
-  /* ── pricing term toggle ── */
+  /* ── pricing term toggle ──────────────────────────────────────────────────
+     Prices come from the same service the Windows app reads, which reads them
+     from the store. They used to be typed here AND in the comparison table AND
+     in the app AND in the store, and they drifted: this page showed $150/$799
+     for weeks after the store had moved on, so the page and the checkout
+     disagreed about what a customer would pay.
+
+     The values below are the fallback, not the source of truth. They render
+     immediately, with no JavaScript, and for a search engine; the fetch then
+     overwrites them. If the service is unreachable the page still shows a
+     complete price list rather than blanks -- possibly stale, never empty.
+     ───────────────────────────────────────────────────────────────────────── */
   var seg = document.querySelector('.seg');
   if (seg) {
     /* `was` is the same period bought as consecutive 1-year terms, so the
@@ -819,11 +839,14 @@
       '2y': { pro:['$250','for 2 years','$300','Two years for the price of one and a half.'],             org:['$1,099','once'] },
       'lt': { pro:['$499','once',      null,   'Pay once. The licence never expires.'],                   org:['$1,099','once'] }
     };
+    var term = '1y';
+
     function set(s, txt, hide){
       var el = document.querySelector(s); if (!el) return;
       if (hide){ el.hidden = true; return; } el.hidden = false; el.textContent = txt;
     }
     function paint(t){
+      term = t;
       var d = D[t];
       set('[data-now]', d.pro[0]); set('[data-per]', d.pro[1]);
       set('[data-was]', d.pro[2], !d.pro[2]); set('[data-note]', d.pro[3]);
@@ -836,6 +859,68 @@
       var b = e.target.closest('button[data-term]'); if (b) paint(b.dataset.term);
     });
     paint('1y');
+
+    /* ── live prices ── */
+    var money = function(n){ return '$' + Number(n).toLocaleString('en-US'); };
+
+    fetch('https://questviewer-license-expiry.gowthamvrxr.workers.dev/products')
+      .then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(data){
+        if (!data || !data.plans || !data.plans.length) return;
+
+        var by = {};
+        data.plans.forEach(function(p){ by[p.tier + '-' + p.term] = p; });
+
+        /* Organization has no 2-year SKU; its 2y and lt tabs are the same
+           lifetime product. Mirrors FindOrNearest in the app. */
+        var org = function(t){ return by['organization-' + t] || by['organization-lt']; };
+        var pro = function(t){ return by['pro-' + t]; };
+
+        var yearly = pro('1y');
+
+        ['1y','2y','lt'].forEach(function(t){
+          var p = pro(t), o = org(t);
+          if (!p || !o) return;
+
+          /* Strikethrough: a discount set in the store wins, because that is a
+             real one. Otherwise compare against buying the same span as
+             consecutive 1-year terms. */
+          var was = null;
+          if (p.was) {
+            was = money(p.was);
+          } else if (p.term_years && p.term_years > 1 && yearly) {
+            var full = yearly.price * p.term_years;
+            if (full > p.price) was = money(full);
+          }
+
+          var note = D[t].pro[3];
+          if (t === '2y' && was && yearly) {
+            var pct = Math.round((yearly.price * 2 - p.price) / (yearly.price * 2) * 100);
+            if (pct > 0) note = 'Two years for ' + pct + '% less than two single years.';
+          }
+
+          D[t] = {
+            pro: [money(p.price), p.term_unit, was, note],
+            org: [money(o.price), o.term_unit]
+          };
+        });
+
+        /* The comparison table and the room-size slider carry the same numbers,
+           so they have to move together or the page contradicts itself. */
+        document.querySelectorAll('[data-price-for]').forEach(function(td){
+          var p = by[td.getAttribute('data-price-for')];
+          if (p) td.textContent = money(p.price);
+        });
+
+        if (pro('1y') && pro('lt')) {
+          PRO_FROM = 'From ' + money(pro('1y').price) + ' a year, or ' +
+                     money(pro('lt').price) + ' once.';
+        }
+
+        paint(term);
+        if (repaintRoom) repaintRoom();
+      })
+      .catch(function(){ /* offline or service down: the fallback above stands */ });
   }
 })();
 </script>
